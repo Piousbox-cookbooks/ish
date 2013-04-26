@@ -1,0 +1,111 @@
+search(:apps) do |app|
+  (app["server_roles"] & node.run_list.roles).each do |app_role|
+    app["type"][app_role].each do |thing|
+      node.run_state[:current_app] = app
+      appname = app_role
+      deploy_to = "/home/ubuntu/projects/#{app['id']}"
+      
+      app = data_bag_item("apps", appname)
+      
+      rbenv_script "permissions for bundler" do
+        code %{ sudo chown ubuntu /usr/local/rbenv -R }
+      end
+      
+      rbenv_script "install bundler" do
+        code %{ cd #{deploy_to}/current && gem install bundler }
+      end
+
+      template "#{deploy_to}/shared/unicorn.rb" do
+        owner 'ubuntu'
+        group 'nogroup'
+        source "unicorn.conf.rb.erb"
+        mode "0664"
+        variables(
+          :app => appname,
+          :port => app['unicorn_port']
+        )
+      end
+
+      #rbenv_script "update ish-lib" do
+      #  code %{ cd /home/ubuntu/projects/ish-lib/current && git pull }
+      #end
+      #
+      #rbenv_script "symlink to ish-lib" do
+      #  code %{cd /home/ubuntu/projects/#{appname}/current/lib && rm ish-lib && ln -s /home/ubuntu/projects/ish-lib }
+      #end
+
+      rbenv_script "bundle install" do
+        code %{cd #{deploy_to}/current && bundle install --without test development --path vendor/bundle }
+      end
+
+      rbenv_script "precompile assets" do
+        code %{cd #{deploy_to}/current && bundle exec rake assets:precompile && chown ubuntu public/assets -R }
+      end
+
+      upstart_script_name = "#{app['id']}-app"
+
+      template "/etc/init/#{upstart_script_name}.conf" do
+        source "unicorn-upstart.conf.erb"
+        owner "root"
+        group "root"
+        mode "0664"
+
+        variables(
+          :app_name       => app['id'],
+          :app_root       => "/home/ubuntu/projects/#{appname}/current",
+          :log_file       => "/home/ubuntu/projects/#{appname}/current/log/unicorn.log",
+          :unicorn_config => "/home/ubuntu/projects/#{appname}/shared/unicorn.rb",
+          :unicorn_binary => "bundle exec unicorn_rails",
+          :rack_env       => 'production'
+        )
+      end
+
+      template "#{deploy_to}/current/config/initializers/const.rb" do
+        owner 'ubuntu'
+        group 'nogroup'
+        source "qxt/const.rb.erb"
+        mode "0664"
+      end
+
+      template "#{deploy_to}/current/config/mongoid.yml" do        
+        if appname == 'qxt'
+          source "app/config/mongoid.yml.erb"
+        else
+          source "app/config/mongoid_v2.0.yml.erb"
+        end
+        
+        owner "ubuntu"
+        group "ubuntu"
+        mode "0664"
+      
+        variables(
+          :host => data_bag_item('utils', 'db_config')["mongodb_ip"],
+          :port => data_bag_item('utils', 'db_config')["mongodb_port"],
+          :database => data_bag_item('utils', 'db_config')["mongodb_database"]
+        )
+      end
+      
+      template "#{deploy_to}/current/config/database.yml" do
+        source "app/config/database_remote.yml.erb"
+        owner "ubuntu"
+        group "ubuntu"
+        mode "0664"
+      
+        variables(
+          :host => data_bag_item('utils', 'db_config')["mysql_ip"],
+          :database => "showv"
+        )
+      end
+
+      service upstart_script_name do
+        provider Chef::Provider::Service::Upstart
+        supports :status => true, :restart => true
+        action [ :enable, :start ]
+      end
+    
+    end
+  end
+end
+
+node.run_state.delete(:current_app)
+
