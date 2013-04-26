@@ -18,3 +18,5 @@ recipe "ish::extra", "extra stuff for the OS"
 end
 
 # version 0.1.0, mysql gem is installed at all times
+# added python2.6 to packages. The package list is huge!
+
