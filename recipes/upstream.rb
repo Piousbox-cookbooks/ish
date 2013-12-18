@@ -3,10 +3,11 @@ search(:apps) do |app|
     app["type"][app_role].each do |thing|
       node.run_state[:current_app] = app
       appname = app_role
-      deploy_to = "/home/ubuntu/projects/#{app['id']}"
       
       app = data_bag_item("apps", appname)
       rails_env = app['rack_environment']
+      deploy_to = app['deploy_to']
+      deploy_user = app['owner']
 
       ## Then, deploy
       deploy_revision app['id'] do
@@ -73,24 +74,37 @@ search(:apps) do |app|
       end
       
       rbenv_script "permissions for bundler" do
-        code %{ sudo chown ubuntu /usr/local/rbenv -R }
+        code %{ sudo chown #{app['owner']} /usr/local/rbenv -R }
       end
       
-      rbenv_script "install bundler" do
-        code %{ cd #{deploy_to}/current && gem install bundler }
+      # rbenv_script "install bundler" do
+      #   code %{ cd #{app['deploy_to']}/current && gem install bundler }
+      # end
+
+      rbenv_script 'uninstall and cleanup bundler gem' do
+        code %{ cd #{app['deploy_to']}/current && gem cleanup bundler }
+      end
+
+      app['gems'].each do |gem|
+        rbenv_script "install gem #{gem[0]}" do
+          code %{ cd #{app['deploy_to']}/current && gem install #{gem[0]} --version #{gem[1]} }
+        end
       end
 
       rbenv_script 'bundle install' do
         code %{ cd #{deploy_to}/current && bundle install --without development test }
       end
 
-      rbenv_script 'recompile bcrypt' do
-        code %{ cd #{deploy_to}/current/vendor/ruby/1.9.1/gems/bcrypt*/ext/mri && ruby extconf.rb && make && make install }
+      # this is for microsites2-cities only
+      if 'microsites2_cities' == app['id']
+        rbenv_script 'recompile bcrypt' do
+          code %{ cd #{deploy_to}/current/vendor/ruby/1.9.1/gems/bcrypt*/ext/mri && ruby extconf.rb && make && make install }
+        end
       end
 
       template "#{deploy_to}/shared/unicorn.rb" do
-        owner 'ubuntu'
-        group 'nogroup'
+        owner app['owner']
+        group app['group']
         source "unicorn.conf.rb.erb"
         mode "0664"
         variables(
@@ -103,9 +117,9 @@ search(:apps) do |app|
       #   code %{cd #{deploy_to}/current && bundle install --without test development --path vendor/bundle }
       # end
 
-      rbenv_script "precompile assets" do
-        code %{cd #{deploy_to}/current && bundle exec rake assets:precompile && chown ubuntu public/assets -R }
-      end
+      # rbenv_script "precompile assets" do
+      #   code %{cd #{app['deploy_to']}/current && bundle exec rake assets:precompile && chown #{app['owner']} public/assets -R }
+      # end
 
       upstart_script_name = "#{app['id']}-app"
 
@@ -117,30 +131,30 @@ search(:apps) do |app|
 
         variables(
           :app_name       => app['id'],
-          :app_root       => "/home/ubuntu/projects/#{appname}/current",
-          :log_file       => "/home/ubuntu/projects/#{appname}/current/log/unicorn.log",
-          :unicorn_config => "/home/ubuntu/projects/#{appname}/shared/unicorn.rb",
+          :app_root       => "#{app['deploy_to']}/current",
+          :log_file       => "#{app['deploy_to']}/current/log/unicorn.log",
+          :unicorn_config => "#{app['deploy_to']}/shared/unicorn.rb",
           :unicorn_binary => "bundle exec unicorn_rails",
           :rack_env       => app['rack_environment']
         )
       end
 
-      template "#{deploy_to}/current/config/initializers/const.rb" do
-        owner 'ubuntu'
-        group 'nogroup'
+      template "#{app['deploy_to']}/current/config/initializers/const.rb" do
+        owner app['owner']
+        group app['group']
         source "qxt/const.rb.erb"
         mode "0664"
       end
 
-      template "#{deploy_to}/current/config/mongoid.yml" do        
+      template "#{app['deploy_to']}/current/config/mongoid.yml" do        
         if appname == 'qxt'
           source "app/config/mongoid.yml.erb"
         else
           source "app/config/mongoid_v2.0.yml.erb"
         end
         
-        owner "ubuntu"
-        group "ubuntu"
+        owner app['owner']
+        group app['group']
         mode "0664"
       
         variables(
@@ -150,10 +164,10 @@ search(:apps) do |app|
         )
       end
       
-      template "#{deploy_to}/current/config/database.yml" do
+      template "#{app['deploy_to']}/current/config/database.yml" do
         source "app/config/database_remote.yml.erb"
-        owner "ubuntu"
-        group "ubuntu"
+        owner app['owner']
+        group app['group']
         mode "0664"
       
         variables(

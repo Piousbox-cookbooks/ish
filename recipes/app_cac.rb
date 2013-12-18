@@ -1,19 +1,7 @@
 
-
-
-data_bag("apps").each do |entry|
-  
-  app = data_bag_item("apps", entry)
-  
-  if app['id'] == 'cac'
-    
-    app_role = "cac"
-
-    app["type"][app_role].each do |thing|
-      node.run_state[:current_app] = app
-      include_recipe "application::#{thing}"
-    end
-  end
+app = data_bag_item( 'apps', 'cac' )
+app["type"][app['id']].each do |thing|
+  node.run_state[:current_app] = app
+  include_recipe "application::#{thing}"
 end
-
 node.run_state.delete(:current_app)

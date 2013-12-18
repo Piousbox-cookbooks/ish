@@ -1,0 +1,49 @@
+server {
+  listen <%= @listen %> default;
+  server_name <%= @server_names.join(' ') %> localhost;
+
+  passenger_enabled on;
+  rails_env production;
+
+  access_log  /var/log/nginx/localhost.access.log;
+
+  root <%= @deploy_to %>/current/public;
+
+  location /images {
+    root   /usr/share;
+    autoindex on;
+  }
+
+  # redirect server error pages to the static page /50x.html
+  #
+  # error_page   500 502 503 504  /50x.html;
+  # location = /50x.html {
+  #   root /var/www/nginx-default;
+  # }
+
+  location ~ /\.ht {
+    deny  all;
+  }
+}
+
+# HTTPS server
+#
+# server {
+# listen   443;
+# server_name  localhost;
+
+# ssl  on;
+# ssl_certificate  cert.pem;
+# ssl_certificate_key  cert.key;
+
+# ssl_session_timeout  5m;
+
+# ssl_protocols  SSLv2 SSLv3 TLSv1;
+# ssl_ciphers  ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP;
+# ssl_prefer_server_ciphers   on;
+
+
+
+
+
+

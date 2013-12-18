@@ -22,7 +22,7 @@ packages = %w{ gcc g++
  nmap
  libsasl2-2 libsasl2-dev libsasl2-modules
  memcached
- python2.6
+ zip
 }
 
 packages.each do |pkg|
