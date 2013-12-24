@@ -1,11 +1,22 @@
 
-# ish base
+#
+# cookbook ish
+# recipe base
+# author victor pudeyev <admin@piousbox.com>
+# copyright 2013 Wasya.co
+# GPLv2 license
+#
+# 
+# descr: Provides the basics that are likely not resource-consuming and likely to be used on any node.
+#        20131224
+#
 
 execute 'apt-get update -y' do
   command %{apt-get update -y}
 end
 
-packages = %w{ gcc g++ 
+packages = %w{
+ gcc g++ 
  build-essential libssl-dev zlib1g-dev 
  linux-headers-generic 
  libsqlite3-dev 

@@ -1,6 +1,6 @@
 
 # 
-# upstream JS
+# upstream JS recipe.
 #
 
 def puts! args

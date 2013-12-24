@@ -1,8 +1,12 @@
 
 #
-# Put a revision of a resource to the deploy_to folder.
+# Copyright 2013 Wasya.co
+# Author Victor Pudeyev <admin@piousbox.com>
 # _vp_ 20130818
 # GPL2 license
+#
+# descr: Put a revision of a resource to the deploy_to folder.
+#        This is the app of a static site. Works well with ish_apache::static_site (which is the lb)
 #
 
 app = data_bag_item( "apps", node[:apache2][:app_server_role] )
