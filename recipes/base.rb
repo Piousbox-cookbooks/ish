@@ -18,22 +18,18 @@ end
 packages = %w{
  gcc g++ 
  build-essential libssl-dev zlib1g-dev 
+
+ nmap zip emacs23 tree imagemagick
+
  linux-headers-generic 
  libsqlite3-dev 
  libcurl4-openssl-dev 
  mysql-client libmysql-ruby libmysqlclient-dev mysql-server
- libxml2-dev libyaml-dev
- tree 
- libcurl4-openssl-dev libssl-dev gcc-4.4 libopenssl-ruby libxslt-dev 
- emacs23
- imagemagick
- mongodb 
- nodejs npm 
+ libxml2-dev libyaml-dev libxslt-dev 
+ libcurl4-openssl-dev gcc-4.4 libopenssl-ruby 
+ mongodb
  apache2
- nmap
  libsasl2-2 libsasl2-dev libsasl2-modules
- memcached
- zip
 }
 
 packages.each do |pkg|
@@ -45,3 +41,11 @@ end
 rbenv_script "rbenv rehash" do
   code %{ rbenv rehash }
 end
+
+directory "/home/ubuntu/projects" do
+  owner 'ubuntu'
+  group 'ubuntu'
+  mode 0555
+  action :create
+end
+

@@ -1,12 +1,13 @@
 
-# ish base_php
+# ish base
 
 execute 'apt-get update -y' do
   command %{apt-get update -y}
 end
 
-packages = %w{ 
-  npm nodejs
+packages = %w{
+ libsasl2-2 libsasl2-dev libsasl2-modules
+ memcached
 }
 
 packages.each do |pkg|
@@ -15,3 +16,6 @@ packages.each do |pkg|
   end
 end
 
+rbenv_script "rbenv rehash" do
+  code %{ rbenv rehash }
+end
