@@ -108,11 +108,11 @@ search(:apps) do |app|
       end
 
       # this is for microsites2-cities only
-      if 'microsites2_cities' == app['id']
-        rbenv_script 'recompile bcrypt' do
-          code %{ cd #{app['deploy_to']}/current/vendor/ruby/1.9.1/gems/bcrypt*/ext/mri && ruby extconf.rb && make && make install }
-        end
-      end
+      # if 'microsites2_cities' == app['id']
+      #   rbenv_script 'recompile bcrypt' do
+      #     code %{ cd #{app['deploy_to']}/current/vendor/ruby/1.9.1/gems/bcrypt*/ext/mri && ruby extconf.rb && make && make install }
+      #   end
+      # end
 
       template "#{app['deploy_to']}/shared/unicorn.rb" do
         owner app['owner']
