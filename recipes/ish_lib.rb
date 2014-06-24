@@ -1,16 +1,17 @@
 
 #
-# ish-lib, instead of application:rails
+# ish-lib, deploy resource 
+# Copyright (c) CAC 
 # 20120801
-#
+# 20140623
 #
 #
 #
 
-app = data_bag_item("apps", 'ish-lib')
+app = data_bag_item('utils', 'ish_lib')
 
 rails_env = '_default'
-deploy_to = "/home/ubuntu/projects/ish-lib"
+deploy_to = app['deploy_to']
 
 node.default[:apps][app['id']][node.chef_environment][:run_migrations] = false
 
@@ -49,7 +50,10 @@ end
 
 end
 
-if app.has_key?("deploy_key")
+puts '+++ +++'
+puts app.inspect
+
+if app['deploy_key']
   ruby_block "write_key" do
     block do
       f = ::File.open("#{app['deploy_to']}/id_deploy", "w")
@@ -61,7 +65,7 @@ if app.has_key?("deploy_key")
 
   file "#{app['deploy_to']}/id_deploy" do
     owner app['owner']
-    group app['group']
+    group app['group'] 
     mode '0600'
   end
 
@@ -82,10 +86,12 @@ deploy_revision app['id'] do
   user app['owner']
   group app['group']
   deploy_to app['deploy_to']
-  environment 'RAILS_ENV' => rails_env
+  environment 'RAILS_ENV' => app['rack_environment']
   action app['force'][node.chef_environment] ? :force_deploy : :deploy
   ssh_wrapper "#{app['deploy_to']}/deploy-ssh-wrapper" if app['deploy_key']
   shallow_clone true  
   migrate false
 
 end
+
+node.run_state.delete(:current_app)
