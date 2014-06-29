@@ -1,0 +1,8 @@
+<%= environment %>: &id001
+  host: <%= host %>
+  database: <%= database %>
+  sessions:
+    default:
+      database: <%= database %>
+      hosts:
+        - <%= host %>:27017

@@ -1,17 +1,8 @@
-
-# 10.0.1.51
-# ish_production
-# 27018
-
-production:
+<%= @environment %>:
   host: <%= @host %>
   database: <%= @database %>
-  port: <%= @port %>
-#  slaves:
-#    - host: localhost
-#      port: 27017
-#    - host: localhost
-#      port: 27018
-#    - host: 10.0.0.134
-#      port: 27017
-  
+  sessions:
+    default:
+      database: <%= @database %>
+      hosts:
+        - <%= @host %>:27017

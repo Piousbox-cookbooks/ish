@@ -91,7 +91,18 @@ template "#{app['deploy_to']}/current/config/initializers/s3.rb" do
   source "app/config/initializers/s3.rb.erb"
   variables(
     :key => app['s3_key'],
-    :secret => app['s3_secret']
+    :secret => app['s3_secret'],
+    :bucket => app['s3_bucket']
+  )
+end
+
+template "#{app['deploy_to']}/current/config/mongoid.yml" do
+  owner app['owner']
+  source "app/config/mongoid.yml.erb"
+  variables(
+    :host => data_bag_item('utils', 'db_config')['mongodb_ip'],
+    :database => app['databases']['mongoid']['database'],
+    :environment => app['rack_environment']
   )
 end
 
