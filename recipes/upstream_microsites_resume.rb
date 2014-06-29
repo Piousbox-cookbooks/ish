@@ -73,6 +73,7 @@ end
 [ :delete, :create ].each do |which_action|
   directory "#{app['deploy_to']}/current/vendor" do
     action which_action
+    recursive true
   end
 end
 
