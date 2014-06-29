@@ -71,12 +71,27 @@ end
 #
 
 [ :delete, :create ].each do |which_action|
-directory "#{app['deploy_to']}/current/vendor" do
-  action which_action
+  directory "#{app['deploy_to']}/current/vendor" do
+    action which_action
+  end
 end
 
 execute "bundle" do
   cwd "#{app['deploy_to']}/current"
+end
+
+
+
+#
+# configure the app
+#
+template "#{app['deploy_to']}/current/config/initializers/s3.rb" do
+  owner app['owner']
+  source "app/config/initializers/s3.rb.erb"
+  variables(
+    :key => app['s3_key'],
+    :secret => app['s3_secret']
+  )
 end
 
 
