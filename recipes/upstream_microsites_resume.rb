@@ -51,19 +51,35 @@ deploy_revision app['id'] do
   group app['group']
   deploy_to app['deploy_to']
   environment 'RAILS_ENV' => app['rack_environment']
-  action :force_deploy # :deploy
+  action app['force'][node.chef_environment]
   ssh_wrapper "#{app['deploy_to']}/deploy-ssh-wrapper"
   shallow_clone false
   migrate false
 end
 
-%w{ log pigs }.each do |name|
+%w{ log pids }.each do |name|
   directory "#{app['deploy_to']}/shared/#{name}" do
     action :create
     recursive true
     owner app['owner']
   end
 end
+
+
+#
+# bundle
+#
+
+[ :delete, :create ].each do |which_action|
+directory "#{app['deploy_to']}/current/vendor" do
+  action which_action
+end
+
+execute "bundle" do
+  cwd "#{app['deploy_to']}/current"
+end
+
+
 
 #
 # service
@@ -86,9 +102,9 @@ template "/etc/init/#{upstart_script_name}.conf" do
   mode "0664"
   variables(
     :app_name       => app['id'],
-    :app_root       => "/srv/#{app['id']}/current",
-    :log_file       => "/srv/#{app['id']}/current/log/unicorn.log",
-    :unicorn_config => "/srv/#{app['id']}/shared/unicorn.rb",
+    :app_root       => "#{app['deploy_to']}/current",
+    :log_file       => "#{app['deploy_to']}/current/log/unicorn.log",
+    :unicorn_config => "#{app['deploy_to']}/shared/unicorn.rb",
     :unicorn_binary => "bundle exec unicorn_rails",
     :rack_env       => 'production'
   )
