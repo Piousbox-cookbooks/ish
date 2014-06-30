@@ -50,9 +50,6 @@ end
 
 end
 
-puts '+++ +++'
-puts app.inspect
-
 if app['deploy_key']
   ruby_block "write_key" do
     block do
@@ -94,4 +91,4 @@ deploy_revision app['id'] do
 
 end
 
-node.run_state.delete(:current_app)
+# node.run_state.delete(:current_app)

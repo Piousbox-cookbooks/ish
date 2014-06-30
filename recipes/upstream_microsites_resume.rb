@@ -9,12 +9,24 @@ end
 
 app = data_bag_item("apps", 'microsites2_resume')
 
+directory "#{app['deploy_to']}/shared" do
+  action :create
+  recursive true
+  owner app['owner']
+end
+%w{ log pids }.each do |name|
+  directory "#{app['deploy_to']}/shared/#{name}" do
+    action :create
+    recursive true
+    owner app['owner']
+  end
+end
+
 
 
 #
-# stupid wrapper
+# wrapper
 #
-
 ruby_block "write_key" do
   block do
     f = ::File.open("#{app['deploy_to']}/id_deploy", "w")
@@ -23,13 +35,11 @@ ruby_block "write_key" do
   end
   not_if do ::File.exists?("#{app['deploy_to']}/id_deploy"); end
 end
-
 file "#{app['deploy_to']}/id_deploy" do
   owner app['owner']
   group app['group'] 
   mode '0600'
 end
-
 template "#{app['deploy_to']}/deploy-ssh-wrapper" do
   source "deploy-ssh-wrapper.erb"
   owner app['owner']
@@ -43,7 +53,6 @@ end
 #
 # deploy resource
 #
-
 deploy_revision app['id'] do
   revision app['revision'][node.chef_environment]
   repository app['repository']
@@ -51,32 +60,22 @@ deploy_revision app['id'] do
   group app['group']
   deploy_to app['deploy_to']
   environment 'RAILS_ENV' => app['rack_environment']
-  action app['force'][node.chef_environment]
+  action app['force'][node.chef_environment] ? 'force_deploy' : 'deploy'
   ssh_wrapper "#{app['deploy_to']}/deploy-ssh-wrapper"
   shallow_clone false
   migrate false
-end
-
-%w{ log pids }.each do |name|
-  directory "#{app['deploy_to']}/shared/#{name}" do
-    action :create
-    recursive true
-    owner app['owner']
-  end
 end
 
 
 #
 # bundle
 #
-
 [ :delete, :create ].each do |which_action|
   directory "#{app['deploy_to']}/current/vendor" do
     action which_action
     recursive true
   end
 end
-
 execute "bundle" do
   cwd "#{app['deploy_to']}/current"
 end
@@ -95,7 +94,6 @@ template "#{app['deploy_to']}/current/config/initializers/s3.rb" do
     :bucket => app['s3_bucket']
   )
 end
-
 template "#{app['deploy_to']}/current/config/mongoid.yml" do
   owner app['owner']
   source "app/config/mongoid.yml.erb"
@@ -136,7 +134,6 @@ template "/etc/init/#{upstart_script_name}.conf" do
     :rack_env       => 'production'
   )
 end
-
 service upstart_script_name do
   provider Chef::Provider::Service::Upstart
   supports :status => true, :restart => true
