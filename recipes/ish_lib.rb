@@ -4,14 +4,11 @@
 # Copyright (c) CAC 
 # 20120801
 # 20140623
-#
+# 20140705
 #
 #
 
 app = data_bag_item('utils', 'ish_lib')
-
-rails_env = '_default'
-deploy_to = app['deploy_to']
 
 node.default[:apps][app['id']][node.chef_environment][:run_migrations] = false
 

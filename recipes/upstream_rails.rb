@@ -1,6 +1,6 @@
 
-def puts! args
-  puts "+++ +++"
+def puts! args, label = ""
+  puts "+++ +++ #{label}"
   puts args.inspect
 end
 
@@ -10,6 +10,12 @@ gems.each do |gem|
     action :install
   end
 end
+
+
+# puts! node.roles, "Node Roles"
+# search(:apps) do |any_app|
+#   puts! any_app['id']
+# end
 
 search(:apps) do |any_app|
 
@@ -26,7 +32,7 @@ search(:apps) do |any_app|
         recursive true
         owner app['owner']
       end
-      %w{ log pids }.each do |name|
+      %w{ log pids system vendor_bundle }.each do |name|
         directory "#{app['deploy_to']}/shared/#{name}" do
           action :create
           recursive true
