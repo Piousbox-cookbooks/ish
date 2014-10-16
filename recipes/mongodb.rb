@@ -17,17 +17,13 @@ directory "/data/db" do
   recursive true
 end
 
-# replace /etc/mysql/my.conf
-
 template "/etc/mongodb.conf" do
   source "etc/mongodb.conf.erb"
   owner "root"
   group "root"
   mode "0664"
-
   variables(
-    :bind_ip => data_bag_item('utils', 'db_config')['mongodb_ip'],
+    :bind_ip => search( :node, "role:db_mongodb" )[0].ipaddress,
     :port => data_bag_item('utils', 'db_config')['mongodb_port']
   )
-  
 end
