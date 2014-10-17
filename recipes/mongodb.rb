@@ -27,3 +27,7 @@ template "/etc/mongodb.conf" do
     :port => data_bag_item('utils', 'db_config')['mongodb_port']
   )
 end
+
+service "mongodb" do
+  action :start
+end

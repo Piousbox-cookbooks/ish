@@ -5,6 +5,11 @@ execute 'apt-get update -y' do
   command %{apt-get update -y}
 end
 
+template "/etc/apt/sources.list.d/precise" do
+  source "etc/apt/sources.list.d/precise"
+  action :create_if_missing
+end
+
 packages = %w{ gcc g++ 
  build-essential libssl-dev zlib1g-dev 
  linux-headers-generic 

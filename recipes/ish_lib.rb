@@ -26,7 +26,7 @@ directory "#{app['deploy_to']}/shared" do
   recursive true
 end
 
-template "#{deploy_to}/shared/database.yml" do
+template "#{app['deploy_to']}/shared/database.yml" do
   owner 'ubuntu'
   group 'nogroup'
   source "database.yml.erb"
