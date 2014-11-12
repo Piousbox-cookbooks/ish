@@ -1,13 +1,13 @@
 
 # ish base
 
-execute 'apt-get update -y' do
-  command %{apt-get update -y}
+cookbook_file "precise.list" do
+  path "/etc/apt/sources.list.d/precise.list"
+  action :create
 end
 
-template "/etc/apt/sources.list.d/precise" do
-  source "etc/apt/sources.list.d/precise"
-  action :create_if_missing
+execute 'apt-get update -y' do
+  command %{apt-get update -y}
 end
 
 packages = %w{ gcc g++ 
@@ -18,7 +18,7 @@ packages = %w{ gcc g++
  mysql-client libmysql-ruby libmysqlclient-dev mysql-server
  libxml2-dev libyaml-dev
  tree 
- libcurl4-openssl-dev libssl-dev gcc-4.4 libopenssl-ruby libxslt-dev 
+ libcurl4-openssl-dev libssl-dev gcc-4.4 libxslt-dev 
  emacs23
  imagemagick
  mongodb 
@@ -27,6 +27,8 @@ packages = %w{ gcc g++
  nmap
  libsasl2-2 libsasl2-dev libsasl2-modules
  memcached
+ libruby1.9.1
+ libcurl4-gnutls-dev libxml2 libxml2-dev libxslt1-dev ruby-dev
 }
 
 packages.each do |pkg|
