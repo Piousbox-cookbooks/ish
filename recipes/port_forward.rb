@@ -1,13 +1,18 @@
 
-
-
-template "/etc/init/port_forward.conf" do
-  variables :port_forwards => data_bag_item("utils", "port_forward")['port_forwards']
-  source "upstart_port_forward.erb"
+def puts! arg, label=''
+  puts "+++ +++ #{label}"
+  puts arg.inspect
 end
 
-service 'port_forward' do
-  provider Chef::Provider::Service::Upstart
-  supports :status => true, :restart => true
-  action [ :enable, :start ]
+execute "sudo sysctl net.ipv4.ip_forward=1"
+execute "sudo iptables --flush && sudo iptables --flush -t nat"
+execute "sudo iptables -t nat -A POSTROUTING -j MASQUERADE"
+
+this_ip = node['ipaddress']
+
+this_data_bag = data_bag_item( 'utils', 'port_forward' )
+this_data_bag['port_forwards'].each do |row|
+  execute "sudo iptables -t nat -A PREROUTING -p tcp -d #{this_ip} -j DNAT --dport #{row['port']} --to #{row['forward']}:22"
 end
+
+execute "sudo service ufw restart"
