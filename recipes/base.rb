@@ -37,6 +37,6 @@ packages.each do |pkg|
   end
 end
 
-rbenv_script "rbenv rehash" do
-  code %{ rbenv rehash }
-end
+# rbenv_script "rbenv rehash" do
+#   code %{ rbenv rehash }
+# end
