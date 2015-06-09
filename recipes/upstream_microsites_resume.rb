@@ -116,6 +116,17 @@ search(:apps) do |any_app|
 
 
     #
+    # link ish_lib
+    #
+    %w{ app/models app/assets lib data }.each do |folder|
+      link "#{app['deploy_to']}/current/#{folder}" do
+        to "/home/#{app['owner']}/projects/ish_lib/current/#{folder}"
+      end
+    end
+
+
+
+    #
     # service
     #
     template "#{app['deploy_to']}/shared/unicorn.rb" do
