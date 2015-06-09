@@ -11,5 +11,5 @@ pre-start script
   test -e <%= @unicorn_config %> || { stop; exit 0; }
 end script
 
-exec su - ubuntu -c 'cd <%= @app_root %>; <%= @unicorn_binary %> -c <%= @unicorn_config %> -E <%= @rack_env %>'
+exec su - <%= @user %> -c 'cd <%= @app_root %>; <%= @unicorn_binary %> -c <%= @unicorn_config %> -E <%= @rack_env %>'
 

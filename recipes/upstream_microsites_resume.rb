@@ -102,7 +102,7 @@ search(:apps) do |any_app|
       owner app['owner']
       source "app/config/mongoid.yml.erb"
       variables(
-        :host => data_bag_item('utils', 'db_config')['mongodb_ip'],
+        :host => app['databases']['mongoid']['host'],
         :database => app['databases']['mongoid']['database'],
         :environment => app['rack_environment']
       )
@@ -137,7 +137,8 @@ search(:apps) do |any_app|
         :log_file       => "#{app['deploy_to']}/current/log/unicorn.log",
         :unicorn_config => "#{app['deploy_to']}/shared/unicorn.rb",
         :unicorn_binary => "bundle exec unicorn_rails",
-        :rack_env       => 'production'
+        :rack_env       => 'production',
+        :user           => app['owner']
       )
     end
     service upstart_script_name do
