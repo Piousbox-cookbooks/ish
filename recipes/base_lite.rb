@@ -8,9 +8,6 @@ execute 'apt-get update -y' do
 end
 
 packages = %w{
- tree
- emacs23
- imagemagick
 }
 
 packages.each do |pkg|
