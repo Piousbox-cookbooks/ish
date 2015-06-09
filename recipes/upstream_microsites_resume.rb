@@ -7,6 +7,11 @@ gems.each do |gem|
   end
 end
 
+def puts! a, b=""
+  puts "+++ +++ #{b}"
+  puts a.inspect
+end
+
 search(:apps) do |any_app|
   if node.roles.include?( any_app['id'] )
     app = data_bag_item('apps', any_app['id'])

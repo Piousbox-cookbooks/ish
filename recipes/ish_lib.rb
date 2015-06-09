@@ -19,9 +19,12 @@ search(:apps) do |any_app|
   if node.roles.include?( any_app['id'] )
     extra_app = data_bag_item('apps', any_app['id'])
     
-    app['deploy_to'] ||= "/home/#{app['owner']}/projects/ish_lib"
     app['owner'] = extra_app['owner']
     app['group'] = extra_app['group']
+    homedir = 'root' == app['owner'] ? "/root" : "/home/#{app['owner']}"
+    app['deploy_to'] ||= "#{homedir}/projects/ish_lib"
+
+    puts! app['deploy_to'], "deploy ish_lib to"
 
     node.default[:apps][extra_app['id']][node.chef_environment][:run_migrations] = false
 
