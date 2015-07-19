@@ -5,6 +5,13 @@
 # Deploys the resource of a static site (with public/ directory).
 # Works in conjunction with ish_apache::static_site, which takes up a port and serves the ish::static_site to the load balancer (presumably).
 
+def puts! args, label=""
+  puts "+++ +++ #{label}"
+  puts args.inspect
+end
+
+puts! "Enter recipe ish::static_site"
+
 # review config
 site               = data_bag_item('utils', 'static_site')
 site['repository'] = node['static_site']['repository'] || site['repository']
@@ -24,17 +31,17 @@ ruby_block "write_key" do
   not_if do ::File.exists?("/home/#{site['user']}/projects/id_deploy"); end
 end
 file "/home/#{site['user']}/projects/id_deploy" do
-  owner app['owner']
-  group app['group'] 
+  owner site['user']
+  group site['user'] 
   mode '0600'
 end
 template "/home/#{site['user']}/projects/deploy-ssh-wrapper" do
   source "deploy-ssh-wrapper.erb"
-  owner app['owner']
-  group app['group']
+  owner site['user']
+  group site['user']
   mode "0755"
   variables({
-    :deploy_to => "/home/#{site['user']}/projects/#{site['name']}"
+    :deploy_to => "/home/#{site['user']}/projects"
   })
 end
 
@@ -57,28 +64,46 @@ end
 
 
 # open this port in apache2 config
-if File.read( "/etc/apache2/ports.conf" ).include?( "Listen #{site['port']}" )
-  ; # do nothing
-else
-  ` echo "Listen #{site['port']}" >> /etc/apache2/ports.conf `
-  ` echo "NameVirtualHost *:#{site['port']}" >> /etc/apache2/ports.conf `
+if File.exist?( "/etc/apache2/ports.conf" )
+  if File.read( "/etc/apache2/ports.conf" ).include?( "Listen #{site['port']}" )
+    ; # do nothing
+  else
+    ` echo "Listen #{site['port']}" >> /etc/apache2/ports.conf `
+    ` echo "NameVirtualHost *:#{site['port']}" >> /etc/apache2/ports.conf `
+  end
 end
 
 # configure apache2 site
-template "/etc/apache2/sites-available/#{site['name']}" do # no .conf extension
-  source "etc/apache2/sites-available/site_simple.erb"
+template "/etc/apache2/sites-available/#{site['name']}.conf" do # no .conf extension
+  source "etc/apache2/sites-available/site_simple.conf.erb"
   owner site['user']
   group site['user']
   mode "0664"
   variables(
     :name => site['name'],
     :port => site['port'],
+    :user => site['user']
   )
 end
 
 execute "enable site" do
   command %{ a2ensite #{site['name']} }
 end
+
+execute "open this port" do
+  command %{ echo "\nListen #{site['port']}" >> /etc/apache2/ports.conf }
+  not_if { ::File.read("/etc/apache2/ports.conf").include?("Listen #{site['port']}") }
+end
+execute "open this port 2" do
+  command %{ echo "\nNameVirtualHost *:#{site['port']}" >> /etc/apache2/ports.conf }
+  not_if { ::File.read("/etc/apache2/ports.conf").include?("NameVirtualHost *:#{site['port']}") }
+end
+
+execute "reload apache2 config" do
+  command %{ service apache2 reload }
+end
+
+
 
 
 

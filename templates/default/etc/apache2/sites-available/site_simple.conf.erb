@@ -22,6 +22,14 @@
   # ProxyPass / http://10.0.1.169:8089/  connectiontimeout=400 timeout=400 Keepalive=On
   # ProxyPassReverse / http://10.0.1.169:8089/
 
-  DocumentRoot "/home/ubuntu/projects/<%=@name-%>/public"
+  DocumentRoot "/home/<%=@user-%>/projects/<%=@name-%>/current/public"
 
+  <Directory /home/<%=@user-%>/projects/<%=@name-%>/current/public>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+    Require all granted
+  </Directory>
+  
 </VirtualHost>
