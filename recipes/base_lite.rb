@@ -3,6 +3,13 @@
 # Ish recipe base
 #
 
+def puts! args, label=""
+  puts "+++ +++ #{label}"
+  puts args.inspect
+end
+
+
+
 execute 'apt-get update -y' do
   command %{apt-get update -y}
 end
@@ -15,3 +22,6 @@ packages.each do |pkg|
     action :install
   end
 end
+
+puts! node['nagios']['server_role'], "nagios role on #{node} is"
+
