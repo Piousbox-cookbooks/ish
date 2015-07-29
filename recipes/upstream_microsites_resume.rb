@@ -12,6 +12,8 @@ def puts! a, b=""
   puts a.inspect
 end
 
+include_recipe 'ish::ish_lib'
+
 search(:apps) do |any_app|
   if node.roles.include?( any_app['id'] )
     app = data_bag_item('apps', any_app['id'])
@@ -131,16 +133,17 @@ search(:apps) do |any_app|
     #
     template "#{app['deploy_to']}/shared/unicorn.rb" do
       owner app['owner']
-      group app['group']
+      group app['owner']
       source "unicorn.conf.rb.erb"
       mode "0664"
       variables({
-        :app => app['id'],
-        :port => app['unicorn_port'],
-        :owner => app['owner'],
-        :group => app['group']
-      })
-    end 
+                  :app => app['id'],
+                  :deploy_to => app['deploy_to'],
+                  :port => app['unicorn_port'],
+                  :owner => app['owner'],
+                  :group => app['group']
+                })
+    end
     upstart_script_name = "#{app['id']}-app"
     template "/etc/init/#{upstart_script_name}.conf" do
       source "unicorn-upstart.conf.erb"

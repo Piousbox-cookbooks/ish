@@ -1,17 +1,17 @@
 
 worker_processes 8
 
-working_directory "/home/<%= @owner %>/projects/<%= @app %>/current" 
+working_directory "<%= @deploy_to %>/current" 
 
 listen "/tmp/<%= @app %>.sock", :backlog => 64
 listen <%= @port %>, :tcp_nopush => true
 
 timeout 300
 
-pid "/home/<%= @owner %>/projects/<%= @app %>/current/tmp/pids/unicorn.pid"
+pid "<%= @deploy_to %>/current/tmp/pids/unicorn.pid"
 
-stderr_path "/home/<%= @owner %>/projects/<%= @app %>/shared/log/<%= @app %>.unicorn.stderr.log"
-stdout_path "/home/<%= @owner %>/projects/<%= @app %>/shared/log/<%= @app %>.unicorn.stdout.log"
+stderr_path "<%= @deploy_to %>/shared/log/<%= @app %>.unicorn.stderr.log"
+stdout_path "<%= @deploy_to %>/shared/log/<%= @app %>.unicorn.stdout.log"
 
 preload_app true
 GC.respond_to?(:copy_on_write_friendly=) and

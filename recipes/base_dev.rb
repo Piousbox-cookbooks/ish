@@ -13,7 +13,7 @@ homedir = 'root' == user ? '/root' : "/home/#{user}"
 
 packages = %w{
  tree
- emacs23
+ emacs
  imagemagick
 }
 

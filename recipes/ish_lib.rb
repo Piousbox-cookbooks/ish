@@ -20,7 +20,6 @@ search(:apps) do |any_app|
     extra_app = data_bag_item('apps', any_app['id'])
     
     app['owner'] = extra_app['owner']
-    app['group'] = extra_app['group']
     homedir = 'root' == app['owner'] ? "/root" : "/home/#{app['owner']}"
     app['deploy_to'] ||= "#{homedir}/projects/ish_lib"
 
@@ -30,21 +29,21 @@ search(:apps) do |any_app|
 
     directory app['deploy_to'] do
       owner app['owner']
-      group app['group']
+      group app['owner']
       mode '0755'
       recursive true
     end
 
     directory "#{app['deploy_to']}/shared" do
       owner app['owner']
-      group app['group']
+      group app['owner']
       mode '0755'
       recursive true
     end
 
     template "#{app['deploy_to']}/shared/database.yml" do
       owner app['owner']
-      group app['group']
+      group app['woner']
       source "database.yml.erb"
       mode "0664"
       variables(
@@ -56,7 +55,7 @@ search(:apps) do |any_app|
 
       directory "#{app['deploy_to']}/shared/#{dir}" do
         owner app['owner']
-        group app['group']
+        group app['owner']
         mode '0755'
         recursive true
       end
@@ -67,7 +66,7 @@ search(:apps) do |any_app|
       ruby_block "write_key" do
         block do
           f = ::File.open("#{app['deploy_to']}/id_deploy", "w")
-          f.print(extra_app["deploy_key"])
+          f.print(app["deploy_key"])
           f.close
         end
         not_if do ::File.exists?("#{app['deploy_to']}/id_deploy"); end
@@ -75,14 +74,14 @@ search(:apps) do |any_app|
 
       file "#{app['deploy_to']}/id_deploy" do
         owner app['owner']
-        group app['group'] 
+        group app['owner'] 
         mode '0600'
       end
 
       template "#{app['deploy_to']}/deploy-ssh-wrapper" do
         source "deploy-ssh-wrapper.erb"
         owner app['owner']
-        group app['group']
+        group app['owner']
         mode "0755"
         variables app.to_hash
       end
@@ -94,7 +93,7 @@ search(:apps) do |any_app|
       revision app['revision'][node.chef_environment]
       repository app['repository']
       user app['owner']
-      group app['group']
+      group app['owner']
       deploy_to app['deploy_to']
       environment 'RAILS_ENV' => app['rack_environment']
       action app['force'][node.chef_environment] ? :force_deploy : :deploy

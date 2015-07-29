@@ -8,8 +8,6 @@ def puts! args, label=""
   puts args.inspect
 end
 
-
-
 execute 'apt-get update -y' do
   command %{apt-get update -y}
 end
