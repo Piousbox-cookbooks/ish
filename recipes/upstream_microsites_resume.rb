@@ -126,6 +126,18 @@ search(:apps) do |any_app|
       end
     end
 
+    
+
+    #
+    # create some dirs
+    #
+    %w{ tmp/cache/assets }.each do |folder|
+      directory "#{app['deploy_to']}/current/#{folder}" do
+        action :create
+        owner app['owner']
+        recursive true
+      end
+    end
 
 
     #
