@@ -73,7 +73,7 @@ search(:apps) do |any_app|
       environment 'RAILS_ENV' => app['rack_environment']
       action app['force'][node.chef_environment] ? :force_deploy : :deploy
       ssh_wrapper "#{app['deploy_to']}/deploy-ssh-wrapper" if app['deploy_key']
-      shallow_clone false # reference is not a tree
+      shallow_clone true # reference is not a tree -> set this to false.
       migrate false
     end
 
