@@ -46,20 +46,17 @@ search(:apps) do |any_app|
       group app['woner']
       source "database.yml.erb"
       mode "0664"
-      variables(
-                
-                )
+      variables({
+                })
     end
 
     %w{ log pids system vendor_bundle }.each do |dir|
-
       directory "#{app['deploy_to']}/shared/#{dir}" do
         owner app['owner']
         group app['owner']
         mode '0755'
         recursive true
       end
-
     end
 
     if app['deploy_key']
@@ -86,7 +83,6 @@ search(:apps) do |any_app|
         variables app.to_hash
       end
     end
-
     
     ## Then, deploy
     deploy_revision app['id'] do
