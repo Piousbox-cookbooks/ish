@@ -90,6 +90,10 @@ search(:apps) do |any_app|
       end
     end
     execute "bundle" do
+      command "export LANG=en_US.UTF-8 &&
+               export LANGUAGE=en_US.UTF-8 &&
+               export export LC_ALL=en_US.UTF-8 && 
+               bundle"
       cwd "#{app['deploy_to']}/current"
     end
 
