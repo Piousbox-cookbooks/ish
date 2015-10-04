@@ -116,6 +116,14 @@ search(:apps) do |any_app|
         :environment => app['rack_environment']
       )
     end
+    template "#{app['deploy_to']}/current/config/initializers/recaptcha.rb" do
+      owner app['owner']
+      source "app/config/initializers/recaptcha.rb.erb"
+      variables(
+        :site_key => app['recaptcha_site_key'],
+        :secret_key => app['recaptcha_secret_key']
+      )
+    end
 
 
 
