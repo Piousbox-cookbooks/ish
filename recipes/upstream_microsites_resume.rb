@@ -128,6 +128,11 @@ search(:apps) do |any_app|
         :secret_key => app['recaptcha_secret_key']
       )
     end
+    template "#{app['deploy_to']}/current/config/initializers/devise.rb" do
+      owner app['owner']
+      source "app/config/initializers/devise.rb.erb"
+      variables({})
+    end
 
 
 
