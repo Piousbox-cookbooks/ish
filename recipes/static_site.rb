@@ -17,6 +17,7 @@ site['user']       = node['static_site']['user'] || site['user']
 site['port']       = node['static_site']['port'] || site['port']
 site['name']       = node['static_site']['site_name'] || site['name']
 site['force']      = node['static_site']['force'] || site['force'][node.chef_environment]
+site['is_angular']    = node['static_site']['is_angular'] || false
 
 # deploy resource
 ` mkdir -p /home/#{site['user']}/projects `
@@ -71,6 +72,20 @@ if File.exist?( "/etc/apache2/ports.conf" )
   end
 end
 
+if site['is_angular']
+# configure apache2 angular site
+template "/etc/apache2/sites-available/#{site['name']}.conf" do # no .conf extension
+  source "etc/apache2/sites-available/site_angular.conf.erb"
+  owner site['user']
+  group site['user']
+  mode "0664"
+  variables(
+    :name => site['name'],
+    :port => site['port'],
+    :user => site['user']
+  )
+end
+else
 # configure apache2 site
 template "/etc/apache2/sites-available/#{site['name']}.conf" do # no .conf extension
   source "etc/apache2/sites-available/site_simple.conf.erb"
@@ -82,6 +97,7 @@ template "/etc/apache2/sites-available/#{site['name']}.conf" do # no .conf exten
     :port => site['port'],
     :user => site['user']
   )
+end
 end
 
 execute "enable site" do

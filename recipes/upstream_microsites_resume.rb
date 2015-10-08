@@ -23,6 +23,9 @@ search(:apps) do |any_app|
     app = data_bag_item('apps', any_app['id'])
 
     break unless app['type'][app['id']].include?( "upstream_microsites_resume" )
+
+    puts! 'Enter recipe upstream_microsites_resume'
+    puts! node, 'node is'
       
     directory "#{app['deploy_to']}/shared" do
       action :create
@@ -99,6 +102,7 @@ search(:apps) do |any_app|
                export export LC_ALL=en_US.UTF-8 && 
                bundle"
       cwd "#{app['deploy_to']}/current"
+      not_if { node['skip_bundle'] }
     end
 
 
