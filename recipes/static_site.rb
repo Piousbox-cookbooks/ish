@@ -2,17 +2,15 @@
 #
 # Recipe ish::static_site
 #
-# Deploys the resource of a static site (with public/ directory).
-# Works in conjunction with ish_apache::static_site, which takes up a port and serves the ish::static_site to the load balancer (presumably).
 
 def puts! args, label=""
   puts "+++ +++ #{label}"
   puts args.inspect
 end
 
-puts! "Enter recipe ish::static_site"
-
+#
 # review config
+#
 site               = data_bag_item('utils', 'static_site')
 site['repository'] = node['static_site']['repository'] || site['repository']
 site['user']       = node['static_site']['user'] || site['user']

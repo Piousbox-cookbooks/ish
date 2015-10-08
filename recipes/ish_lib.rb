@@ -23,8 +23,6 @@ search(:apps) do |any_app|
     homedir = 'root' == app['owner'] ? "/root" : "/home/#{app['owner']}"
     app['deploy_to'] ||= "#{homedir}/projects/ish_lib"
 
-    puts! app['deploy_to'], "deploy ish_lib to"
-
     node.default[:apps][extra_app['id']][node.chef_environment][:run_migrations] = false
 
     directory app['deploy_to'] do

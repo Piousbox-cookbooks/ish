@@ -17,9 +17,13 @@ include_recipe 'rbenv'
 include_recipe 'ish::ish_lib'
 
 search(:apps) do |any_app|
-  if node.roles.include?( any_app['id'] )
+  node.roles.each do |role|
+
+    if any_app['id'] == role
     app = data_bag_item('apps', any_app['id'])
 
+    break unless app['type'][app['id']].include?( "upstream_microsites_resume" )
+      
     directory "#{app['deploy_to']}/shared" do
       action :create
       recursive true
@@ -190,8 +194,7 @@ search(:apps) do |any_app|
       supports :status => true, :restart => true
       action [ :enable, :start ]
     end
-
-
+    end
   end
 end
     
