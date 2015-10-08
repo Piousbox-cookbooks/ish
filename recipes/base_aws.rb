@@ -11,6 +11,9 @@ execute 'apt-get update -y' do
   command %{apt-get update -y}
 end
 
+user = node['user'] || 'oink'
+homedir = 'root' == user ? '/root' : "/home/#{user}"
+
 packages = %w{
   emacs tree
 }
