@@ -9,9 +9,9 @@ recipe "ish", "Installs"
 recipe "ish::db_bootstrap", "Bootstraps db"
 recipe "ish::extra", "extra stuff for the OS"
 
-# %w{ git sqlite nginx mysql application }.each do |cb|
-#   depends cb
-# end
+%w{ git sqlite nginx mysql application ruby_build rbenv }.each do |cb|
+  depends cb
+end
 
 %w{ ubuntu debian }.each do |os|
   supports os
