@@ -16,31 +16,29 @@ include_recipe 'ruby_build'
 include_recipe 'rbenv'
 include_recipe 'ish::ish_lib'
 
+# puts! "Enter recipe upstream_microsites_resume"
+
 search(:apps) do |any_app|
   node.roles.each do |role|
 
     if any_app['id'] == role
-    app = data_bag_item('apps', any_app['id'])
+      app = data_bag_item('apps', any_app['id'])
+      if app['type'][app['id']].include?( "upstream_microsites_resume" )
 
-    break unless app['type'][app['id']].include?( "upstream_microsites_resume" )
+        directory "#{app['deploy_to']}/shared" do
+          action :create
+          recursive true
+          owner app['owner']
+        end
+        %w{ log pids }.each do |name|
+          directory "#{app['deploy_to']}/shared/#{name}" do
+            action :create
+            recursive true
+            owner app['owner']
+          end
+        end
 
-    puts! 'Enter recipe upstream_microsites_resume'
-    puts! node, 'node is'
-      
-    directory "#{app['deploy_to']}/shared" do
-      action :create
-      recursive true
-      owner app['owner']
-    end
-    %w{ log pids }.each do |name|
-      directory "#{app['deploy_to']}/shared/#{name}" do
-        action :create
-        recursive true
-        owner app['owner']
-      end
-    end
-
-    execute "install bundler" do
+        execute "install bundler" do
       command "apt-get install bundler -y"
     end
 
@@ -102,7 +100,6 @@ search(:apps) do |any_app|
                export export LC_ALL=en_US.UTF-8 && 
                bundle"
       cwd "#{app['deploy_to']}/current"
-      not_if { node['skip_bundle'] }
     end
 
 

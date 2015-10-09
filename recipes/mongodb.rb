@@ -1,4 +1,12 @@
 
+def puts! a, b=""
+  puts "+++ +++ #{b}"
+  puts a.inspect
+end
+
+puts! "Enter recipe mongodb"
+puts! node['ipaddress'], 'node ipaddress'
+
 packages = %w{
  mongodb-server mongodb-clients
 }
@@ -23,7 +31,7 @@ template "/etc/mongodb.conf" do
   group "root"
   mode "0664"
   variables(
-    :bind_ip => search( :node, "role:db_mongodb" )[0].ipaddress,
+    :bind_ip => node['ipaddress'],
     :port => data_bag_item('utils', 'db_config')['mongodb_port']
   )
 end
