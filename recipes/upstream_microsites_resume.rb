@@ -194,7 +194,9 @@ search(:apps) do |any_app|
           action [ :enable, :start ]
         end
 
-        node.run_list.remove( "role[#{app['id']}]" )
+	## this is a bit too extreme... it actually affects the run list.
+        ## DO NOT USE! _vp_ 20152009
+        # node.run_list.remove( "role[#{app['id']}]" )
 
       end
     end
