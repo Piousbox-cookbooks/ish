@@ -17,7 +17,7 @@ homedir = 'root' == user ? '/root' : "/home/#{user}"
 packages = %w{
   emacs tree
 }
-
+packages += node['packages']||[]
 packages.each do |pkg|
   package pkg do
     action :install
