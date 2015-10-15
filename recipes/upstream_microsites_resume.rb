@@ -82,26 +82,29 @@ search(:apps) do |any_app|
           shallow_clone false # reference is not a tree -> set this to false.
           migrate false
         end
-        
-        #
-        # bundle
-        #
-        [ :delete, :create ].each do |which_action|
-          directory "#{app['deploy_to']}/current/vendor" do
-            action which_action
-            recursive true
+
+        if app['skip_bundle']
+          ; # do nothing
+        else
+          #
+          # bundle
+          #
+          [ :delete, :create ].each do |which_action|
+            directory "#{app['deploy_to']}/current/vendor" do
+              action which_action
+              recursive true
+            end
+          end
+          execute "bundle" do
+            command "export LANG=en_US.UTF-8 &&
+                     export LANGUAGE=en_US.UTF-8 &&
+                     export export LC_ALL=en_US.UTF-8 && 
+                     bundle"
+            cwd "#{app['deploy_to']}/current"
           end
         end
-        execute "bundle" do
-          command "export LANG=en_US.UTF-8 &&
-               export LANGUAGE=en_US.UTF-8 &&
-               export export LC_ALL=en_US.UTF-8 && 
-               bundle"
-          cwd "#{app['deploy_to']}/current"
-        end
+
         
-
-
         #
         # configure the app
         #

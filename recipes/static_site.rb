@@ -79,6 +79,16 @@ search(:apps) do |any_app|
               :user => app['user']
             )
           end
+          # configure the api endpoint
+          template "/home/#{app['user']}/projects/#{app['id']}/current/public/js/config.js" do
+            source "app/public/js/config.js.erb"
+            owner app['user']
+            group app['user']
+            mode "0664"
+            variables(
+              :endpoint => app['api_endpoint']
+            )
+          end
         else
           # configure apache2 site
           template "/etc/apache2/sites-available/#{app['id']}.conf" do
