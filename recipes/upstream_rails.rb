@@ -27,7 +27,7 @@ search(:apps) do |any_app|
           execute "apt-get install #{package} -y"
         end
         
-        directory "#{app['deploy_to']}/shared" do
+        directory "#{app['deploy_to']}/shared/config" do
           action :create
           recursive true
           owner app['owner']
@@ -142,7 +142,7 @@ search(:apps) do |any_app|
           end
         end
         if %w( mysql mysql2 ).include? app['databases'][node.chef_environment]['adapter']
-          template "#{app['deploy_to']}/current/config/database.yml" do
+          template "#{app['deploy_to']}/shared/config/database.yml" do
             owner app['owner']
             source "app/config/database_remote.yml.erb"
             variables(
