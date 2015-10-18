@@ -13,6 +13,8 @@ pid "<%= @deploy_to %>/current/tmp/pids/unicorn.pid"
 stderr_path "<%= @deploy_to %>/shared/log/<%= @app %>.unicorn.stderr.log"
 stdout_path "<%= @deploy_to %>/shared/log/<%= @app %>.unicorn.stdout.log"
 
+user "<%= @owner %>", "<%= @group %>"
+
 preload_app true
 GC.respond_to?(:copy_on_write_friendly=) and
   GC.copy_on_write_friendly = true
