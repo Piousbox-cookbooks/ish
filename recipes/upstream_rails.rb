@@ -26,6 +26,13 @@ search(:apps) do |any_app|
         app['packages'].each do |package, version|
           execute "apt-get install #{package} -y"
         end
+
+        directory "#{app['deploy_to']}/shared" do
+          action :create
+          owner app['owner']
+          recursive true
+          mode '0766'
+        end
         
         directory "#{app['deploy_to']}/shared/config" do
           action :create
@@ -157,9 +164,10 @@ search(:apps) do |any_app|
         #
         # create some dirs
         #
-        %w{ tmp/cache/assets }.each do |folder|
+        %w{ tmp tmp/cache tmp/cache/assets }.each do |folder|
           directory "#{app['deploy_to']}/current/#{folder}" do
             action :create
+            mode '0777'
             owner app['owner']
             recursive true
           end
