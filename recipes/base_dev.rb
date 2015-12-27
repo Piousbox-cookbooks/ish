@@ -1,6 +1,9 @@
 
 #
-# Ish recipe base
+# cookbook   ish 
+# recipe     base_dev
+#
+# _vp_ 20151227
 #
 
 def puts! a, b=""
@@ -24,7 +27,6 @@ packages.each do |pkg|
     action :install
   end
 end
-
 
 bashrc_line = "source #{homedir}/.ishrc"
 execute "add .ishrc to .bashrc" do
