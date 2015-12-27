@@ -1,7 +1,7 @@
 
 require 'spec_helper'
 
-describe 'ish::default' do
+describe 'ish::base' do
   let(:chef_run) { ChefSpec::SoloRunner.converge(described_recipe) }
 
   it 'installs foo' do
