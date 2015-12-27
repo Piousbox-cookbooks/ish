@@ -1,9 +1,4 @@
 
-def puts! arg, label=''
-  puts "+++ +++ #{label}"
-  puts arg.inspect
-end
-
 execute "sudo sysctl net.ipv4.ip_forward=1"
 execute "sudo iptables --flush && sudo iptables --flush -t nat"
 execute "sudo iptables -t nat -A POSTROUTING -j MASQUERADE"

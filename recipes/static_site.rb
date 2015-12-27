@@ -3,11 +3,6 @@
 # Recipe ish::static_site
 #
 
-def puts! args, label=""
-  puts "+++ +++ #{label}"
-  puts args.inspect
-end
-
 search(:apps) do |any_app|
   node.roles.each do |role|
     if any_app['id'] == role

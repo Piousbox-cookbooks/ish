@@ -6,11 +6,6 @@
 # _vp_ 20151227
 #
 
-def puts! args, label=""
-  puts "+++ +++ #{label}"
-  puts args.inspect
-end
-
 user = node['user'] || 'oink'
 homedir = 'root' == user ? '/root' : "/home/#{user}"
 

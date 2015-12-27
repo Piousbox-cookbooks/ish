@@ -2,11 +2,6 @@
 # Ish recipe base_aws
 #
 
-def puts! args, label=""
-  puts "+++ +++ #{label}"
-  puts args.inspect
-end
-
 execute 'apt-get update -y' do
   command %{apt-get update -y}
 end

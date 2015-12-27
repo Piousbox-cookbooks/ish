@@ -7,11 +7,6 @@ gems.each do |gem|
   end
 end
 
-def puts! a, b=""
-  puts "+++ +++ #{b}"
-  puts a.inspect
-end
-
 include_recipe 'ruby_build'
 include_recipe 'rbenv'
 include_recipe 'ish::ish_lib'
