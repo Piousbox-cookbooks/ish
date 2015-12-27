@@ -15,6 +15,8 @@ packages = %w{
  tree
  emacs
  imagemagick
+ git
+ screen
 }
 
 packages.each do |pkg|
@@ -25,13 +27,11 @@ end
 
 
 bashrc_line = "source #{homedir}/.ishrc"
-if File.read("#{homedir}/.bashrc").include? bashrc_line
-  # do nothing
-else
-  execute "add .ishrc to .bashrc" do
-    command %| echo "#{bashrc_line}" >> #{homedir}/.bashrc |
-  end
+execute "add .ishrc to .bashrc" do
+  command %| echo "#{bashrc_line}" >> #{homedir}/.bashrc |
+  not_if { File.read("#{homedir}/.bashrc").include? bashrc_line }
 end
+
 cookbook_file "ishrc" do
   path "#{homedir}/.ishrc"
   action :create
