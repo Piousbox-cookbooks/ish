@@ -1,6 +1,9 @@
 
 #
-# Ish recipe base_vm
+# cookbook   ish
+# recipe     base_vm
+#
+# _vp_ 20151227
 #
 
 def puts! args, label=""
@@ -11,9 +14,7 @@ end
 user = node['user'] || 'oink'
 homedir = 'root' == user ? '/root' : "/home/#{user}"
 
-execute 'apt-get update -y' do
-  command %{apt-get update -y}
-end
+execute 'apt-get update -y'
 
 packages = %w{
 }
@@ -24,5 +25,5 @@ packages.each do |pkg|
   end
 end
 
-puts! node['nagios']['server_role'], "nagios role on #{node} is"
+# puts! node['nagios']['server_role'], "nagios role on #{node} is"
 

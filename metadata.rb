@@ -1,9 +1,10 @@
-maintainer        "maintainer"
-maintainer_email  "piousbox@gmail.com"
+name              "ish"
+description       "utility recipes for spawning resources pi-style."
+maintainer        "wasya.co"
+maintainer_email  "victor@wasya.co"
 license           "MIT"
-description       "Does a bunch of stuff."
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version           "0.2.0"
+version           "0.2.1"
 
 recipe "ish", "Installs"
 
