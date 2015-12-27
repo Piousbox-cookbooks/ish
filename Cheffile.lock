@@ -1,0 +1,13 @@
+SITE
+  remote: https://supermarket.getchef.com/api/v1
+  specs:
+    application (5.0.0)
+      poise (~> 2.4)
+      poise-service (~> 1.0)
+    poise (2.4.0)
+    poise-service (1.0.3)
+      poise (~> 2.0)
+
+DEPENDENCIES
+  application (>= 0)
+

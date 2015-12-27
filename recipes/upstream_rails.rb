@@ -227,7 +227,6 @@ search(:apps) do |any_app|
           supports :status => true, :restart => true
           action [ :enable, :start ]
         end
-
       end
     end
   end
