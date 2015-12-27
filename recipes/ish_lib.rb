@@ -1,7 +1,10 @@
 
 #
-# ish-lib, deploy resource 
-# Copyright (c) CAC, Pi
+# cookbook   ish
+# recipe     ish-lib
+#
+# deploy resource 
+# Copyright (c) CAC, wasya.co
 # 20120801
 # 20140623
 # 20140705

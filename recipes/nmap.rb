@@ -1,11 +1,10 @@
 
-execute 'apt-get update -y' do
-  command %{apt-get update -y}
-end
+# execute 'apt-get update -y' do
+#   command %{apt-get update -y}
+# end
 
 packages = %w{ 
  nmap
- 
 }
 
 packages.each do |pkg|
