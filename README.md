@@ -8,7 +8,8 @@ This cookbook from a long time ago helps me deploy various resources. Mostly rai
 
 Versions
 ========
-
-0.2.0 - 20151226 - making extensive use of chef environments.
-0.2.1 - 20151227 - chef-spec is in.
+|version|date     |description                                 |
+|-------|---------|--------------------------------------------|
+|0.2.0  |20151226 |making extensive use of chef environments.  |
+|0.2.1  |20151227 |chef-spec is in.                            |
 
