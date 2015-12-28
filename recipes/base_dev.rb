@@ -15,6 +15,7 @@ packages = %w{
  imagemagick
  git
  screen
+ ruby-dev
 }
 
 packages.each do |pkg|

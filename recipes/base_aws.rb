@@ -10,7 +10,7 @@ user = node['user'] || 'ubuntu'
 homedir = 'root' == user ? '/root' : "/home/#{user}"
 
 packages = %w{
-  emacs tree screen git
+  emacs tree screen git ruby-dev
 }
 packages += node['packages']||[]
 packages.each do |pkg|

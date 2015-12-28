@@ -12,6 +12,7 @@ homedir = 'root' == user ? '/root' : "/home/#{user}"
 execute 'apt-get update -y'
 
 packages = %w{
+  ruby-dev
 }
 
 packages.each do |pkg|

@@ -13,10 +13,6 @@ describe 'ish::install_ruby' do
     ;
   end
 
-  it 'installs ruby 2' do
-    expect(chef_run).to run_execute "install_ruby_2"
-  end
-
   # @TODO I need to use serverspec for this one.
   
 end
