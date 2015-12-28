@@ -15,7 +15,7 @@ gems.each do |gem|
   end
 end
 
-search(:apps) do |any_app|
+search(:apps).each do |any_app|
   node.roles.each do |role|
 
     if any_app['id'] == role
@@ -95,26 +95,26 @@ search(:apps) do |any_app|
           migrate           false
         end
 
-        # if app['skip_bundle']
-        #   ; # do nothing
-        # else
-        #   #
-        #   # bundle
-        #   #
-        #   [ :delete, :create ].each do |which_action|
-        #     directory "#{deploy_to}/current/vendor" do
-        #       action which_action
-        #       recursive true
-        #     end
-        #   end
-        #   execute "bundle" do
-        #     command "export LANG=en_US.UTF-8 &&
-        #              export LANGUAGE=en_US.UTF-8 &&
-        #              export export LC_ALL=en_US.UTF-8 && 
-        #              bundle --without development test"
-        #     cwd "#{app['deploy_to']}/current"
-        #   end
-        # end
+        if app['skip_bundle']
+          ; # do nothing
+        else
+          #
+          # bundle
+          #
+          [ :delete, :create ].each do |which_action|
+            directory "#{deploy_to}/current/vendor" do
+              action which_action
+              recursive true
+            end
+          end
+          execute "bundle" do
+            command "export LANG=en_US.UTF-8 &&
+                     export LANGUAGE=en_US.UTF-8 &&
+                     export export LC_ALL=en_US.UTF-8 && 
+                     bundle --without development test"
+            cwd "#{app['deploy_to']}/current"
+          end
+        end
 
         
         #
@@ -155,6 +155,7 @@ search(:apps) do |any_app|
             )
           end
         end
+                
         if %w{ mysql mysql2 }.include? app['databases']['mysql'][node.chef_environment]['adapter']
           template "#{deploy_to}/shared/config/database.yml" do
             owner     owner
