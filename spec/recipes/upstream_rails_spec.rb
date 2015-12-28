@@ -5,8 +5,8 @@ describe 'ish::upstream_rails' do
   
   let(:chef_run) do
     ChefSpec::SoloRunner.new do |node|
-      node.default[:rbenv] = { :global => '2.0.0-p0',
-                               :rubies => [ '2.0.0-p0' ]
+      node.default[:rbenv] = { :global => '2.0.0-p576',
+                               :rubies => [ '2.0.0-p576' ]
                              }
     end.converge("role[bjjcollective]")
   end

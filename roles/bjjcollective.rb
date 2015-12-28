@@ -14,8 +14,8 @@ override_attributes({ 'balanced_site_trash' => { 'name' => '',
                                                  'port' => ''
                                                },
                       :rbenv => {
-                        :global => '2.0.0-p0',
-                        :rubies => [ '2.0.0-p0' ]
+                        :global => '2.0.0-p576',
+                        :rubies => [ '2.0.0-p576' ]
                       }
                     })
 

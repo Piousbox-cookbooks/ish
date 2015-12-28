@@ -17,7 +17,6 @@ end
 
 search(:apps).each do |any_app|
   node.roles.each do |role|
-
     if any_app['id'] == role
       app = data_bag_item('apps', any_app['id'])
       if app['type'][app['id']].include?( "upstream_rails" )
