@@ -15,6 +15,8 @@ SITE
       dmg (>= 0.0.0)
       windows (>= 0.0.0)
       yum-epel (>= 0.0.0)
+    ish_apache (0.1.0)
+      ish (>= 0.0.0)
     mysql (6.1.2)
       smf (>= 0.0.0)
       yum-mysql-community (>= 0.0.0)
@@ -66,4 +68,5 @@ PATH
 DEPENDENCIES
   application (>= 0)
   ish (>= 0)
+  ish_apache (>= 0)
 

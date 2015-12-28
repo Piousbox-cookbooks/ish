@@ -3,3 +3,4 @@ site "https://supermarket.getchef.com/api/v1"
 cookbook "application"
 
 cookbook "ish", :path => "."
+cookbook "ish_apache"

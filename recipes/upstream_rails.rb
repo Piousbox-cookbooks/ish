@@ -26,30 +26,30 @@ search(:apps) do |any_app|
       if app['type'][app['id']].include?( "upstream_rails" )
         puts! "Deploying ish::upstream_rails app #{app['id']}"
 
-        deploy_to = "/home/#{app['user'][node.chef_environment]}/projects/#{app['id']}"
         owner = app['owner'][node.chef_environment]
+        deploy_to = "/home/#{owner}/projects/#{app['id']}"
 
         app['packages'].each do |package, version|
           execute "apt-get install #{package} -y"
         end
 
         directory "#{deploy_to}/shared" do
-          action :create
-          owner owner
-          recursive true
-          mode '0766'
+          action      :create
+          owner       owner
+          recursive   true
+          mode        '0766'
         end
         
         directory "#{deploy_to}/shared/config" do
-          action :create
-          recursive true
-          owner owner
+          action      :create
+          recursive   true
+          owner       owner
         end
         %w{ log pids }.each do |name|
           directory "#{deploy_to}/shared/#{name}" do
-            action :create
-            recursive true
-            owner owner
+            action      :create
+            recursive   true
+            owner       owner
           end
         end
         
@@ -69,32 +69,32 @@ search(:apps) do |any_app|
           not_if do ::File.exists?("#{deploy_to}/id_deploy"); end
         end
         file "#{deploy_to}/id_deploy" do
-          owner owner
-          group owner
-          mode '0600'
+          owner   owner
+          group   owner
+          mode    '0600'
         end
         template "#{deploy_to}/deploy-ssh-wrapper" do
-          source "deploy-ssh-wrapper.erb"
-          owner owner
-          group owner
-          mode "0755"
-          variables app.to_hash
+          source      "deploy-ssh-wrapper.erb"
+          owner       owner
+          group       owner
+          mode        "0755"
+          variables   app.to_hash
         end
        
         #
         # deploy resource
         #
         deploy_revision app['id'] do
-          revision app['revision'][node.chef_environment]
-          repository app['repository']
-          user owner
-          group owner
-          deploy_to deploy_to
-          environment 'RAILS_ENV' => app['rack_environment']
-          action app['force'][node.chef_environment] ? :force_deploy : :deploy
-          ssh_wrapper "#{deploy_to}/deploy-ssh-wrapper" if app['deploy_key']
-          shallow_clone false # reference is not a tree -> set this to false.
-          migrate false
+          revision          app['revision'][node.chef_environment]
+          repository        app['repository']
+          user              owner
+          group             owner
+          deploy_to         deploy_to
+          environment       'RAILS_ENV' => app['rack_environment']
+          action            app['force'][node.chef_environment] ? :force_deploy : :deploy
+          ssh_wrapper       "#{deploy_to}/deploy-ssh-wrapper" if app['deploy_key']
+          shallow_clone     false # reference is not a tree -> set this to false.
+          migrate           false
         end
 
         # if app['skip_bundle']
@@ -124,11 +124,11 @@ search(:apps) do |any_app|
         #
         if app['s3_key']
           template "#{deploy_to}/current/config/initializers/s3.rb" do
-            owner owner
-            group owner
-            source "app/config/initializers/s3.rb.erb"
+            owner     owner
+            group     owner
+            source    "app/config/initializers/s3.rb.erb"
             variables(
-              :key => app['s3_key'],
+              :key    => app['s3_key'],
               :secret => app['s3_secret'],
               :bucket => app['s3_bucket']
             )
@@ -148,25 +148,25 @@ search(:apps) do |any_app|
         end
         if app['recaptcha_site_key']
           template "#{deploy_to}/current/config/initializers/recaptcha.rb" do
-            owner owner
-            group owner
-            source "app/config/initializers/recaptcha.rb.erb"
+            owner     owner
+            group     owner
+            source    "app/config/initializers/recaptcha.rb.erb"
             variables(
-              :site_key => app['recaptcha_site_key'],
+              :site_key   => app['recaptcha_site_key'],
               :secret_key => app['recaptcha_secret_key']
             )
           end
         end
-        if %w( mysql mysql2 ).include? app['databases'][node.chef_environment]['adapter']
+        if %w{ mysql mysql2 }.include? app['databases']['mysql'][node.chef_environment]['adapter']
           template "#{deploy_to}/shared/config/database.yml" do
-            owner owner
-            group owner
-            source "app/config/database_remote.yml.erb"
+            owner     owner
+            group     owner
+            source    "app/config/database_remote.yml.erb"
             variables(
-              :database => app['databases'][node.chef_environment]['database'],
-              :host     => app['databases'][node.chef_environment]['host'],
-              :username => app['databases'][node.chef_environment]['username'],
-              :password => app['databases'][node.chef_environment]['password']
+              :database => app['databases']['mysql'][node.chef_environment]['database'],
+              :host     => app['databases']['mysql'][node.chef_environment]['host'],
+              :username => app['databases']['mysql'][node.chef_environment]['username'],
+              :password => app['databases']['mysql'][node.chef_environment]['password']
             )
           end
         end
@@ -176,11 +176,11 @@ search(:apps) do |any_app|
         #
         %w{ tmp tmp/cache tmp/cache/assets }.each do |folder|
           directory "#{deploy_to}/current/#{folder}" do
-            action :create
-            mode '0777'
-            owner owner
-            group owner
-            recursive true
+            action      :create
+            mode        '0777'
+            owner       owner
+            group       owner
+            recursive   true
           end
         end
         
@@ -189,10 +189,10 @@ search(:apps) do |any_app|
         # service
         #
         template "#{deploy_to}/shared/unicorn.rb" do
-          owner owner
-          group owner
-          source "unicorn.conf.rb.erb"
-          mode "0664"
+          owner    owner
+          group    owner
+          source   "unicorn.conf.rb.erb"
+          mode     "0664"
           variables({
                       :app => app['id'],
                       :deploy_to => deploy_to,
@@ -204,9 +204,9 @@ search(:apps) do |any_app|
         upstart_script_name = "#{app['id']}-app"
         template "/etc/init/#{upstart_script_name}.conf" do
           source "unicorn-upstart.conf.erb"
-          owner "root"
-          group "root"
-          mode "0664"
+          owner  "root"
+          group  "root"
+          mode   "0664"
           variables(
             :app_name       => app['id'],
             :app_root       => "#{deploy_to}/current",
