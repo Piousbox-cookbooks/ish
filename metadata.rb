@@ -6,7 +6,7 @@ license           "MIT"
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version           "0.2.1"
 
-%w{ application git php ish_apache mysql nginx rbenv ruby_build sqlite }.each do |cb|
+%w{ application git php ish_apache mysql nginx ruby_rbenv ruby_build sqlite }.each do |cb|
   depends cb
 end
 

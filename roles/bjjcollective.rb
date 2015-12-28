@@ -8,16 +8,13 @@ run_list(
   "recipe[ish::upstream_rails]"
 )
 
-override_attributes({ 'balanced_site_trash' => { 'name' => '',
-                                                 'user' => 'oink',
-                                                 'domains' => [ 'a', 'b', 'c' ],
-                                                 'port' => ''
-                                               },
-                      :rbenv => {
-                        :global => '2.0.0-p576',
-                        :rubies => [ '2.0.0-p576' ]
-                      }
-                    })
+override_attributes(
+  { 
+    'rbenv' => {
+      'global' => '2.0.0-p576',
+      'rubies' => [ '2.0.0-p576' ]
+    }
+  })
 
 
 

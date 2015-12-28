@@ -7,7 +7,7 @@
 #
 
 include_recipe 'ruby_build'
-include_recipe 'rbenv::system'
+include_recipe 'ruby_rbenv::system'
 # include_recipe 'rbenv::system_install'
 
 

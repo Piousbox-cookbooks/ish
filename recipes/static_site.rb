@@ -44,7 +44,7 @@ search(:apps).each do |any_app|
           group user
           mode "0755"
           variables({
-                      :deploy_to => app['deploy_to']
+                      :deploy_to => projects_dir # this is only for reference of id_deploy file.
                     })
         end
         

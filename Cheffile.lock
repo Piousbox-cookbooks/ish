@@ -67,6 +67,14 @@ SITE
     yum-mysql-community (0.1.21)
       yum (>= 3.2)
 
+GIT
+  remote: https://github.com/chef-rbenv/ruby_rbenv.git
+  ref: master
+  sha: e8efda4649b843c6ef60a8cfe32794d3f52bd612
+  specs:
+    ruby_rbenv (1.0.1)
+      ruby_build (>= 0.0.0)
+
 PATH
   remote: .
   specs:
@@ -85,4 +93,5 @@ DEPENDENCIES
   ish (>= 0)
   ish_apache (>= 0)
   php (>= 0)
+  ruby_rbenv (>= 0)
 
