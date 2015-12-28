@@ -4,3 +4,5 @@ cookbook "application"
 
 cookbook "ish", :path => "."
 cookbook "ish_apache"
+
+cookbook "php"
