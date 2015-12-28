@@ -6,17 +6,14 @@
 # _vp_ 20151226
 #
 
+include_recipe "ish::install_ruby"
 
-
-# gems = %w{ bundler }
-# gems.each do |gem|
-#   gem_package gem do
-#     action :install
-#   end
-# end
-
-include_recipe 'ruby_build'
-include_recipe 'rbenv'
+gems = %w{ bundler }
+gems.each do |gem|
+  gem_package gem do
+    action :install
+  end
+end
 
 search(:apps) do |any_app|
   node.roles.each do |role|
@@ -28,6 +25,7 @@ search(:apps) do |any_app|
 
         owner = app['owner'][node.chef_environment]
         deploy_to = "/home/#{owner}/projects/#{app['id']}"
+        app['deploy_to'] = deploy_to
 
         app['packages'].each do |package, version|
           execute "apt-get install #{package} -y"
@@ -61,7 +59,7 @@ search(:apps) do |any_app|
         # wrapper
         #
         ruby_block "write_key" do
-          block do
+          block do            
             f = ::File.open("#{deploy_to}/id_deploy", "w")
             f.print(app["deploy_key"])
             f.close

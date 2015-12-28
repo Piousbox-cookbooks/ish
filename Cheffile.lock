@@ -1,6 +1,7 @@
 SITE
   remote: https://supermarket.getchef.com/api/v1
   specs:
+    apache2 (3.1.0)
     application (5.0.0)
       poise (~> 2.4)
       poise-service (~> 1.0)
@@ -15,8 +16,8 @@ SITE
       dmg (>= 0.0.0)
       windows (>= 0.0.0)
       yum-epel (>= 0.0.0)
-    ish_apache (0.1.0)
-      ish (>= 0.0.0)
+    ish_apache (0.1.1)
+      apache2 (>= 0.0.0)
     mysql (6.1.2)
       smf (>= 0.0.0)
       yum-mysql-community (>= 0.0.0)
@@ -59,6 +60,7 @@ PATH
     ish (0.2.1)
       application (>= 0.0.0)
       git (>= 0.0.0)
+      ish_apache (>= 0.0.0)
       mysql (>= 0.0.0)
       nginx (>= 0.0.0)
       rbenv (>= 0.0.0)
