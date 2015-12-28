@@ -119,10 +119,12 @@ search(:apps).each do |any_app|
         execute "open this port" do
           command %{ echo "\nListen #{port}" >> /etc/apache2/ports.conf }
           not_if { ::File.read("/etc/apache2/ports.conf").include?("Listen #{port}") }
+          only_if { ::File.exists?( "/etc/apache2/ports" ) }
         end
         execute "open this port 2" do
           command %{ echo "\nNameVirtualHost *:#{port}" >> /etc/apache2/ports.conf }
           not_if { ::File.read("/etc/apache2/ports.conf").include?("NameVirtualHost *:#{port}") }
+          only_if { ::File.exists?( "/etc/apache2/ports.conf") }
         end
         
         execute "reload apache2 config" do
