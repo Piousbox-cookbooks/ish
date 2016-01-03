@@ -8,9 +8,10 @@ version           "0.2.1"
 
 recipe "ish", "Installs"
 
-%w{ git sqlite nginx mysql application ruby_build rbenv }.each do |cb|
+%w{ git sqlite nginx application ruby_build rbenv }.each do |cb|
   depends cb
 end
+depends "mysql", "~> 6.0"
 
 %w{ ubuntu debian }.each do |os|
   supports os
