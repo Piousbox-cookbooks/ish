@@ -29,6 +29,11 @@ package 'mysql-server' do
   action :install
 end
 
+execute "adjust bind address" do
+  command "sed -i -- 's/127.0.0.1/0.0.0.0/g' my.cnf"
+  cwd "/etc/mysql"
+end
+
 service 'mysql' do
   action [ :enable, :start ]
 end
