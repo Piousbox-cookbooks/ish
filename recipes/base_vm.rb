@@ -6,17 +6,13 @@
 # _vp_ 20151227
 #
 
-def puts! args, label=""
-  puts "+++ +++ #{label}"
-  puts args.inspect
-end
-
 user = node['user'] || 'oink'
 homedir = 'root' == user ? '/root' : "/home/#{user}"
 
 execute 'apt-get update -y'
 
 packages = %w{
+  ruby-dev
 }
 
 packages.each do |pkg|

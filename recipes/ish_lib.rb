@@ -9,12 +9,8 @@
 # 20140623
 # 20140705
 # 20150608
+# 20151227
 #
-
-def puts! args, label=""
-  puts "+++ +++ #{label}"
-  puts args.inspect
-end
 
 app = data_bag_item('utils', 'ish_lib')
 

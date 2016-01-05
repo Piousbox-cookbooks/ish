@@ -1,11 +1,6 @@
 
 require 'socket'
 
-def puts! arg, label=''
-  puts "+++ +++ #{label}"
-  puts arg.inspect
-end
-
 data_bag = data_bag_item 'utils', 'ish_hostnames'
 
 # observe my IP

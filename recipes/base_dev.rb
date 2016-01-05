@@ -6,11 +6,6 @@
 # _vp_ 20151227
 #
 
-def puts! a, b=""
-  puts "+++ +++ #{b}"
-  puts a.inspect
-end
-
 user = node['user'] || 'oink'
 homedir = 'root' == user ? '/root' : "/home/#{user}"
 
@@ -20,6 +15,7 @@ packages = %w{
  imagemagick
  git
  screen
+ ruby-dev
 }
 
 packages.each do |pkg|

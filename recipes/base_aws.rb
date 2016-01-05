@@ -2,11 +2,6 @@
 # Ish recipe base_aws
 #
 
-def puts! args, label=""
-  puts "+++ +++ #{label}"
-  puts args.inspect
-end
-
 execute 'apt-get update -y' do
   command %{apt-get update -y}
 end
@@ -15,7 +10,7 @@ user = node['user'] || 'ubuntu'
 homedir = 'root' == user ? '/root' : "/home/#{user}"
 
 packages = %w{
-  emacs tree screen git
+  emacs tree screen git ruby-dev
 }
 packages += node['packages']||[]
 packages.each do |pkg|
