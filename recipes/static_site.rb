@@ -15,28 +15,31 @@ search(:apps) do |any_app|
       if app['type'][app['id']].include? 'static_site'
         puts! "ish::static_site, deploying #{role}"
 
+        port = app['port'][node.chef_environment]
+        user = app['user'][node.chef_environment]
+        
         # deploy resource
-        ` mkdir -p /home/#{app['user']}/projects `
+        ` mkdir -p /home/#{user}/projects `
         ruby_block "write_key" do
           block do
-            f = ::File.open("/home/#{app['user']}/projects/id_deploy", "w")
+            f = ::File.open("/home/#{user}/projects/id_deploy", "w")
             f.print(app["deploy_key"])
             f.close
           end
-          not_if do ::File.exists?("/home/#{app['user']}/projects/id_deploy"); end
+          not_if do ::File.exists?("/home/#{user}/projects/id_deploy"); end
         end
-        file "/home/#{app['user']}/projects/id_deploy" do
-          owner app['user']
-          group app['user'] 
+        file "/home/#{user}/projects/id_deploy" do
+          owner user
+          group user 
           mode '0600'
         end
-        template "/home/#{app['user']}/projects/deploy-ssh-wrapper" do
+        template "/home/#{user}/projects/deploy-ssh-wrapper" do
           source "deploy-ssh-wrapper.erb"
-          owner app['user']
-          group app['user']
+          owner user
+          group user
           mode "0755"
           variables({
-                      :deploy_to => "/home/#{app['user']}/projects"
+                      :deploy_to => "/home/#{user}/projects"
                     })
         end
         
@@ -46,23 +49,22 @@ search(:apps) do |any_app|
         deploy_revision app['id'] do
           revision app['revision'][node.chef_environment]
           repository app['repository']
-          user app['user']
-          group app['user']
-          deploy_to "/home/#{app['user']}/projects/#{app['id']}"
+          user user
+          group user
+          deploy_to "/home/#{user}/projects/#{app['id']}"
           environment 'RAILS_ENV' => app['rack_environment']
           action app['force'][node.chef_environment] ? :force_deploy : :deploy
-          ssh_wrapper "/home/#{app['user']}/projects/deploy-ssh-wrapper" if app['deploy_key']
+          ssh_wrapper "/home/#{user}/projects/deploy-ssh-wrapper" if app['deploy_key']
           shallow_clone true
           migrate false
         end
 
         # open this port in apache2 config
         if File.exist?( "/etc/apache2/ports.conf" )
-          if File.read( "/etc/apache2/ports.conf" ).include?( "Listen #{app['port']}" )
+          if File.read( "/etc/apache2/ports.conf" ).include?( "Listen *:#{port}" )
             ; # do nothing
           else
-            ` echo "Listen #{app['port']}" >> /etc/apache2/ports.conf `
-            ` echo "NameVirtualHost *:#{app['port']}" >> /etc/apache2/ports.conf `
+            ` echo "Listen *:#{port}" >> /etc/apache2/ports.conf `
           end
         end
         
@@ -70,20 +72,20 @@ search(:apps) do |any_app|
           # configure apache2 angular site
           template "/etc/apache2/sites-available/#{app['id']}.conf" do
             source "etc/apache2/sites-available/site_angular.conf.erb"
-            owner app['user']
-            group app['user']
+            owner user
+            group user
             mode "0664"
             variables(
               :name => app['id'],
-              :port => app['port'],
-              :user => app['user']
+              :port => port,
+              :user => user
             )
           end
           # configure the api endpoint
-          template "/home/#{app['user']}/projects/#{app['id']}/current/public/js/config.js" do
+          template "/home/#{user}/projects/#{app['id']}/current/public/js/config.js" do
             source "app/public/js/config.js.erb"
-            owner app['user']
-            group app['user']
+            owner user
+            group user
             mode "0664"
             variables(
               :endpoint => app['api_endpoint']
@@ -93,13 +95,13 @@ search(:apps) do |any_app|
           # configure apache2 site
           template "/etc/apache2/sites-available/#{app['id']}.conf" do
             source "etc/apache2/sites-available/site_simple.conf.erb"
-            owner app['user']
-            group app['user']
+            owner user
+            group user
             mode "0664"
             variables(
               :name => app['id'],
-              :port => app['port'],
-              :user => app['user']
+              :port => port,
+              :user => user
             )
           end
         end
@@ -109,18 +111,14 @@ search(:apps) do |any_app|
         end
 
         execute "open this port" do
-          command %{ echo "\nListen #{app['port']}" >> /etc/apache2/ports.conf }
-          not_if { ::File.read("/etc/apache2/ports.conf").include?("Listen #{app['port']}") }
-        end
-        execute "open this port 2" do
-          command %{ echo "\nNameVirtualHost *:#{app['port']}" >> /etc/apache2/ports.conf }
-          not_if { ::File.read("/etc/apache2/ports.conf").include?("NameVirtualHost *:#{app['port']}") }
+          command %{ echo "Listen *:#{port}" >> /etc/apache2/ports.conf }
+          not_if { ::File.read("/etc/apache2/ports.conf").include?("Listen *:#{port}") }
         end
         
-        execute "reload apache2 config" do
-          command %{ service apache2 reload }
+        service "apache2" do
+          action :reload
         end
-
+        
       end
     end
   end
