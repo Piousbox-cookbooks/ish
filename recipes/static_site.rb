@@ -117,15 +117,15 @@ search(:apps).each do |any_app|
         end
 
         execute "open this port" do
-          command %{ echo "\nListen #{port}" >> /etc/apache2/ports.conf }
-          not_if { ::File.read("/etc/apache2/ports.conf").include?("Listen #{port}") }
-          only_if { ::File.exists?( "/etc/apache2/ports" ) }
+          command %{ echo "Listen *:#{port}" >> /etc/apache2/ports.conf }
+          not_if { ::File.read("/etc/apache2/ports.conf").include?("Listen *:#{port}") }
+          only_if { ::File.exists?( "/etc/apache2/ports.conf" ) }
         end
-        execute "open this port 2" do
-          command %{ echo "\nNameVirtualHost *:#{port}" >> /etc/apache2/ports.conf }
-          not_if { ::File.read("/etc/apache2/ports.conf").include?("NameVirtualHost *:#{port}") }
-          only_if { ::File.exists?( "/etc/apache2/ports.conf") }
-        end
+        # execute "open this port 2" do
+        #   command %{ echo "NameVirtualHost *:#{port}" >> /etc/apache2/ports.conf }
+        #   not_if { ::File.read("/etc/apache2/ports.conf").include?("NameVirtualHost *:#{port}") }
+        #   only_if { ::File.exists?( "/etc/apache2/ports.conf") }
+        # end
         
         service "apache2" do
           action :reload
