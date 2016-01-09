@@ -18,10 +18,10 @@ end
 EOL
 
 execute "pre-set password" do
-  command "
+  command <<-EOL
 echo 'mysql-server mysql-server/root_password password #{node['mysql']['server_root_password']}' | debconf-set-selections ; \
 echo 'mysql-server mysql-server/root_password_again password #{node['mysql']['server_root_password']}' |debconf-set-selections
-"
+EOL
   action :run
 end
 
@@ -32,7 +32,10 @@ end
 execute "adjust bind address" do
   command "sed -i -- 's/127.0.0.1/0.0.0.0/g' my.cnf"
   cwd "/etc/mysql"
+  notifies :restart, "service[mysql]", :delayed
 end
+
+# grant priviledge to root from all hosts
 
 service 'mysql' do
   action [ :enable, :start ]
