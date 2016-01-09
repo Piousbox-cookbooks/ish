@@ -1,5 +1,4 @@
-
-[![Build Status](https://travis-ci.org/Piousbox-cookbooks/ish.svg)](https://travis-ci.org/Piousbox-cookbooks/ish)
+[![Build Status](https://travis-ci.org/Piousbox-cookbooks/ish.svg?branch=0.2.4)](https://travis-ci.org/Piousbox-cookbooks/ish)
 
 About
 =====
