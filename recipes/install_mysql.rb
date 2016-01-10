@@ -35,7 +35,16 @@ execute "adjust bind address" do
   notifies :restart, "service[mysql]", :delayed
 end
 
-# grant priviledge to root from all hosts
+#            delete from user where host='%';
+#            update user set host='%' where host='localhost';
+query =<<-EOL
+            GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '#{node['mysql']['server_root_password']}' WITH GRANT OPTION;
+            FLUSH PRIVILEGES;
+      EOL
+execute "allow root login from any ip" do
+  command "mysql -u root -p#{node['mysql']['server_root_password']} -e \"#{query}\" mysql";
+  notifies :restart, "service[mysql]", :delayed
+end
 
 service 'mysql' do
   action [ :enable, :start ]
