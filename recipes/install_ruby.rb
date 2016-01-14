@@ -34,23 +34,25 @@ user = case node.chef_environment
 end
 
 execute "install rbenv" do
-  command "git clone https://github.com/rbenv/rbenv.git /opt/.rbenv"
-  not_if { ::File.exists?( "/opt/.rbenv" ) }
+  command "git clone https://github.com/rbenv/rbenv.git /home/#{user}/.rbenv"
+  not_if { ::File.exists?( "/home/#{user}/.rbenv" ) }
 end
 
 execute "install ruby-build" do
-  command "git clone https://github.com/rbenv/ruby-build.git /opt/.rbenv/plugins/ruby-build"
-  not_if { ::File.exists?( "/opt/.rbenv/plugins/ruby-build" ) }
+  command "git clone https://github.com/rbenv/ruby-build.git /home/#{user}/.rbenv/plugins/ruby-build"
+  not_if { ::File.exists?( "/home/#{user}/.rbenv/plugins/ruby-build" ) }
 end
 
-node['rbenv']['rubies'].each do |ruby_version|
-  execute "install ruby #{ruby_version}" do
-    cwd "/opt/.rbenv/bin"
-    command <<-EOL
-      ./rbenv install #{ruby_version}
-    EOL
-    not_if "/opt/.rbenv/bin/rbenv versions | grep #{ruby_version}"
-  end
+ruby_version = node['rbenv']['rubies'][0]
+execute "install ruby #{ruby_version}" do
+  cwd "/home/#{user}/.rbenv/bin"
+  command <<-EOL
+    ./rbenv install #{ruby_version}
+  EOL
+  not_if "/home/#{user}/.rbenv/bin/rbenv versions | grep #{ruby_version}"
+end
+file "/home/#{user}/.rbenv/version" do
+  content ruby_version
 end
 
 

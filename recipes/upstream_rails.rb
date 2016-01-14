@@ -8,13 +8,6 @@
 
 include_recipe "ish::install_ruby"
 
-gems = %w{ bundler }
-gems.each do |gem|
-  gem_package gem do
-    action :install
-  end
-end
-
 search(:apps).each do |any_app|
   node.roles.each do |role|
     if any_app['id'] == role
@@ -22,9 +15,12 @@ search(:apps).each do |any_app|
       if app['type'][app['id']].include?( "upstream_rails" )
         puts! "Deploying ish::upstream_rails app #{app['id']}"
 
-        owner = app['owner'] ? app['owner'][node.chef_environment] : app['user'][node.chef_environment]
+        owner = user = app['owner'] ? app['owner'][node.chef_environment] : app['user'][node.chef_environment]
         deploy_to = "/home/#{owner}/projects/#{app['id']}"
         app['deploy_to'] = deploy_to
+        ruby_version = node['rbenv']['rubies'][0]
+        listen_port = app['listen_port'][node.chef_environment]
+        
 
         app['packages'].each do |package, version|
           execute "apt-get install #{package} -y"
@@ -50,9 +46,9 @@ search(:apps).each do |any_app|
           end
         end
         
-        # execute "install bundler" do
-        #   command "apt-get install bundler -y"
-        # end
+        execute "install bundler" do
+          command "/home/#{user}/.rbenv/shims/gem install bundler"
+        end
         
         #
         # wrapper
@@ -110,7 +106,7 @@ search(:apps).each do |any_app|
             command "export LANG=en_US.UTF-8 &&
                      export LANGUAGE=en_US.UTF-8 &&
                      export export LC_ALL=en_US.UTF-8 && 
-                     bundle --without development test"
+                     /home/#{user}/.rbenv/shims/bundle install --path vendor/bundle --without development test"
             cwd "#{app['deploy_to']}/current"
           end
         end
@@ -194,7 +190,7 @@ search(:apps).each do |any_app|
           variables({
                       :app => app['id'],
                       :deploy_to => deploy_to,
-                      :port => app['unicorn_port'],
+                      :port => listen_port,
                       :owner => owner,
                       :group => owner
                     })
@@ -210,7 +206,7 @@ search(:apps).each do |any_app|
             :app_root       => "#{deploy_to}/current",
             :log_file       => "#{deploy_to}/current/log/unicorn.log",
             :unicorn_config => "#{deploy_to}/shared/unicorn.rb",
-            :unicorn_binary => "bundle exec unicorn_rails",
+            :unicorn_binary => "/home/#{user}/.rbenv/shims/bundle exec unicorn_rails",
             :rack_env       => app['rack_environment'],
             :user           => owner
           )

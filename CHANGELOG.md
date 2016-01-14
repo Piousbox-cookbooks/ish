@@ -6,8 +6,11 @@
 ## 0.2.3:
 * a lot of bjjc work
 
-## 0.2.5"
-* ruby installation is acting up again
+## 0.2.4:
+* relatively stable before custom ruby?
+
+## 0.2.5:
+* the custom ruby install (via rbenv still) implies that upstream_rails should use the full path of the ruby.
 
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.
