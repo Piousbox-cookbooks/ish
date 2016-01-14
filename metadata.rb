@@ -4,9 +4,9 @@ maintainer        "wasya.co"
 maintainer_email  "victor@wasya.co"
 license           "MIT"
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version           "0.2.3"
+version           "0.2.5"
 
-%w{ application git php ish_apache nginx ruby_rbenv ruby_build sqlite }.each do |cb|
+%w{ application git php ish_apache nginx rbenv ruby_rbenv ruby_build sqlite }.each do |cb|
   depends cb
 end
 depends "mysql", "~> 6.0"

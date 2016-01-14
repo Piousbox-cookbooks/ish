@@ -22,7 +22,7 @@ search(:apps).each do |any_app|
       if app['type'][app['id']].include?( "upstream_rails" )
         puts! "Deploying ish::upstream_rails app #{app['id']}"
 
-        owner = app['owner'][node.chef_environment]
+        owner = app['owner'] ? app['owner'][node.chef_environment] : app['user'][node.chef_environment]
         deploy_to = "/home/#{owner}/projects/#{app['id']}"
         app['deploy_to'] = deploy_to
 

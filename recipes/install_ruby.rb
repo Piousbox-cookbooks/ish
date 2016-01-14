@@ -4,10 +4,61 @@
 # recipe   install_ruby
 #
 # _vp_ 20151227
+#      20160113 rbenv doesn't work again... installing from packages
 #
 
-include_recipe 'ruby_build'
-include_recipe 'ruby_rbenv::system'
-# include_recipe 'rbenv::system_install'
+## @OBSOLETE
+# include_recipe "ish::install_ruby_with_rbenv"
+## OR
+# include_recipe "ish::install_ruby_from_packages"
+
+# @TODO: refactor, this should be in attributes/default.rb
+user = case node.chef_environment
+       when 'vm_samsung'
+         'oink'
+       when 'vm_vagrant'
+         'vagrant'
+       when 'vm_vagrant_spec'
+         'vagrant'
+       when '_default'
+         'ubuntu'
+       when 'aws_production'
+         'ubuntu'
+       when 'aws_staging'
+         'ubuntu'
+       end
+
+# @TODO: refactor this into attributes/default.rb
+%w{ git libssl-dev libreadline-dev }.each do |pkg|
+  package pkg
+end
+
+execute "install rbenv" do
+  command "git clone https://github.com/rbenv/rbenv.git /opt/.rbenv"
+  not_if { ::File.exists?( "/opt/.rbenv" ) }
+end
+
+execute "install ruby-build" do
+  command "git clone https://github.com/rbenv/ruby-build.git /opt/.rbenv/plugins/ruby-build"
+  not_if { ::File.exists?( "/opt/.rbenv/plugins/ruby-build" ) }
+end
+
+node['rbenv']['rubies'].each do |ruby_version|
+  execute "install ruby #{ruby_version}" do
+    cwd "/opt/.rbenv/bin"
+    command <<-EOL
+      ./rbenv install #{ruby_version}
+    EOL
+    not_if "/opt/.rbenv/bin/rbenv versions | grep #{ruby_version}"
+  end
+end
 
 
+## @OBSOLETE
+# command <<-EOL
+#   export RBENV_ROOT="/usr/local/rbenv"
+#   if [ -d "${RBENV_ROOT}" ]; then
+#     export PATH="${RBENV_ROOT}/bin:${PATH}"
+#   fi
+#   rbenv install #{ruby_version}"
+# EOL

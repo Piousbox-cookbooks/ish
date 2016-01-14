@@ -6,6 +6,9 @@
 ## 0.2.3:
 * a lot of bjjc work
 
+## 0.2.5"
+* ruby installation is acting up again
+
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.
 
