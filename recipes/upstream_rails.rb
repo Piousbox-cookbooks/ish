@@ -33,12 +33,7 @@ search(:apps).each do |any_app|
           mode        '0766'
         end
         
-        directory "#{deploy_to}/shared/config" do
-          action      :create
-          recursive   true
-          owner       owner
-        end
-        %w{ log pids }.each do |name|
+        %w{ log pids config }.each do |name|
           directory "#{deploy_to}/shared/#{name}" do
             action      :create
             recursive   true
@@ -73,7 +68,21 @@ search(:apps).each do |any_app|
           mode        "0755"
           variables   app.to_hash
         end
-       
+
+        # has to be before deploy_revision
+        template "#{deploy_to}/shared/config/database.yml" do
+          source    "app/config/database_remote.yml.erb"
+          owner     owner
+          group     owner
+          variables(
+            :database => app['databases']['mysql'][node.chef_environment]['database'],
+            :host     => app['databases']['mysql'][node.chef_environment]['host'],
+            :username => app['databases']['mysql'][node.chef_environment]['username'],
+            :password => app['databases']['mysql'][node.chef_environment]['password']
+          )
+          only_if { %w{ mysql mysql2 }.include? app['databases']['mysql'][node.chef_environment]['adapter'] }
+        end
+
         #
         # deploy resource
         #
@@ -111,7 +120,6 @@ search(:apps).each do |any_app|
           end
         end
 
-        
         #
         # configure the app
         #
@@ -121,9 +129,9 @@ search(:apps).each do |any_app|
             group     owner
             source    "app/config/initializers/s3.rb.erb"
             variables(
-              :key    => app['s3_key'],
-              :secret => app['s3_secret'],
-              :bucket => app['s3_bucket']
+              :key    => app['s3_key'][node.chef_environment],
+              :secret => app['s3_secret'][node.chef_environment],
+              :bucket => app['s3_bucket'][node.chef_environment]
             )
           end
         end
@@ -139,32 +147,17 @@ search(:apps).each do |any_app|
             )
           end
         end
-        if app['recaptcha_site_key']
-          template "#{deploy_to}/current/config/initializers/recaptcha.rb" do
-            owner     owner
-            group     owner
-            source    "app/config/initializers/recaptcha.rb.erb"
-            variables(
-              :site_key   => app['recaptcha_site_key'],
-              :secret_key => app['recaptcha_secret_key']
-            )
-          end
+        template "#{deploy_to}/current/config/initializers/recaptcha.rb" do
+          source    "app/config/initializers/recaptcha.rb.erb"
+          owner     owner
+          group     owner
+          variables(
+            :site_key   => app['recaptcha_site_key'],
+            :secret_key => app['recaptcha_secret_key']
+          )
+          only_if { app['recaptcha_site_key'] }
         end
                 
-        if %w{ mysql mysql2 }.include? app['databases']['mysql'][node.chef_environment]['adapter']
-          template "#{deploy_to}/shared/config/database.yml" do
-            owner     owner
-            group     owner
-            source    "app/config/database_remote.yml.erb"
-            variables(
-              :database => app['databases']['mysql'][node.chef_environment]['database'],
-              :host     => app['databases']['mysql'][node.chef_environment]['host'],
-              :username => app['databases']['mysql'][node.chef_environment]['username'],
-              :password => app['databases']['mysql'][node.chef_environment]['password']
-            )
-          end
-        end
-
         #
         # create some dirs
         #

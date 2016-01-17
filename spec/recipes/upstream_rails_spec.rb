@@ -12,10 +12,11 @@ describe 'ish::upstream_rails' do
   end
 
   before :each do
-    stub_search("apps", "*:*").and_return([{ :id => 'bjjcollective' }])
     stub_search(:apps,  "*:*").and_return([{ :id => 'bjjcollective' }])
     
     stub_command("/usr/sbin/apache2 -t").and_return(true)
+    stub_command("/home/ubuntu/.rbenv/bin/rbenv versions | grep 2.0.0-p576").and_return(true)
+    
     stub_data_bag_item("apps", "bjjcollective").and_return(
       'id' => 'bjjcollective',
       'owner' => { "_default" => 'oink' },
@@ -28,6 +29,9 @@ describe 'ish::upstream_rails' do
           "_default" => { "adapter" => false }
         },
         "mongoid" => false
+      },
+      "listen_port" => {
+        "_default" => 9999
       }
     )
     @deploy_to = "/home/oink/projects/bjjcollective"
