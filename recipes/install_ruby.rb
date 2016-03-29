@@ -43,16 +43,18 @@ execute "install ruby-build" do
   not_if { ::File.exists?( "/home/#{user}/.rbenv/plugins/ruby-build" ) }
 end
 
-ruby_version = node['rbenv']['rubies'][0]
-execute "install ruby #{ruby_version}" do
-  cwd "/home/#{user}/.rbenv/bin"
-  command <<-EOL
-    ./rbenv install #{ruby_version}
-  EOL
-  not_if "/home/#{user}/.rbenv/bin/rbenv versions | grep #{ruby_version}"
+node['rbenv']['rubies'].each do |ruby_version|
+  execute "install ruby #{ruby_version}" do
+    cwd "/home/#{user}/.rbenv/bin"
+    command <<-EOL
+      ./rbenv install #{ruby_version}
+    EOL
+    not_if "/home/#{user}/.rbenv/bin/rbenv versions | grep #{ruby_version}"
+  end
 end
+
 file "/home/#{user}/.rbenv/version" do
-  content ruby_version
+  content node['rbenv']['global']
 end
 
 

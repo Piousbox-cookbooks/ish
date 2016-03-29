@@ -2,7 +2,7 @@
 #
 # Recipe ish::static_site
 #
-# _vp_ 20151228
+# _vp_ 20151228, 20160415
 #
 
 search(:apps).each do |any_app|

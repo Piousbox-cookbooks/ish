@@ -19,11 +19,14 @@ search(:apps).each do |any_app|
         deploy_to = "/home/#{owner}/projects/#{app['id']}"
         app['deploy_to'] = deploy_to
         ruby_version = node['rbenv']['rubies'][0]
-        listen_port = app['listen_port'][node.chef_environment]
-        
+        # in case of bjjc listen port is the one on top of both angular and appserver ports.
+        listen_port = app['appserver_port'] ? app['appserver_port'][node.chef_environment] : app['listen_port'][node.chef_environment]
+      
 
-        app['packages'].each do |package, version|
-          execute "apt-get install #{package} -y"
+        app['packages'].each do |pkg, version|
+          package pkg do
+            action :install
+          end
         end
 
         directory "#{deploy_to}/shared" do
@@ -69,7 +72,7 @@ search(:apps).each do |any_app|
           variables   app.to_hash
         end
 
-        # has to be before deploy_revision
+        # has to be before deploy_revision ??
         template "#{deploy_to}/shared/config/database.yml" do
           source    "app/config/database_remote.yml.erb"
           owner     owner
