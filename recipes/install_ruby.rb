@@ -5,12 +5,9 @@
 #
 # _vp_ 20151227
 #      20160113 rbenv doesn't work again... installing from packages
+# _vp_ 20160508 This here, it better work!
 #
-
-## @OBSOLETE
-# include_recipe "ish::install_ruby_with_rbenv"
-## OR
-# include_recipe "ish::install_ruby_from_packages"
+#
 
 # @TODO: refactor, this should be in attributes/default.rb
 user = case node.chef_environment
@@ -25,6 +22,12 @@ user = case node.chef_environment
        when 'aws_production'
          'ubuntu'
        when 'aws_staging'
+         'ubuntu'
+       when 'demo1'
+         'ubuntu'
+       when 'demo2'
+         'ubuntu'
+       else
          'ubuntu'
        end
 
@@ -51,6 +54,7 @@ node['rbenv']['rubies'].each do |ruby_version|
     EOL
     not_if "/home/#{user}/.rbenv/bin/rbenv versions | grep #{ruby_version}"
   end
+  execute "/home/#{user}/.rbenv/versions/#{ruby_version}/bin/gem install bundler"
 end
 
 file "/home/#{user}/.rbenv/version" do
@@ -58,11 +62,3 @@ file "/home/#{user}/.rbenv/version" do
 end
 
 
-## @OBSOLETE
-# command <<-EOL
-#   export RBENV_ROOT="/usr/local/rbenv"
-#   if [ -d "${RBENV_ROOT}" ]; then
-#     export PATH="${RBENV_ROOT}/bin:${PATH}"
-#   fi
-#   rbenv install #{ruby_version}"
-# EOL

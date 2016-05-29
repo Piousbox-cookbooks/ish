@@ -1,31 +1,19 @@
 
-gems = %w{ bundler }
-
-gems.each do |gem|
-  gem_package gem do
-    action :install
-  end
-end
-
-include_recipe 'ruby_build'
-include_recipe 'rbenv'
+include_recipe 'ish::install_ruby' # _vp_ 20160508
 include_recipe 'ish::ish_lib'
-
-# puts! "Enter recipe upstream_microsites_resume"
 
 search(:apps) do |any_app|
   node.roles.each do |role|
-
     if any_app['id'] == role
       app = data_bag_item('apps', any_app['id'])
       if app['type'][app['id']].include?( "upstream_microsites_resume" )
-        puts! "Deploying #{app['id']}"
+
+        ##
+        ## config
+        ##
+        user         = app['user'][node.chef_environment]
+        ruby_version = app['ruby_version']
         
-        directory "#{app['deploy_to']}/shared" do
-          action :create
-          recursive true
-          owner app['owner']
-        end
         %w{ log pids }.each do |name|
           directory "#{app['deploy_to']}/shared/#{name}" do
             action :create
@@ -33,9 +21,9 @@ search(:apps) do |any_app|
             owner app['owner']
           end
         end
-        
+
         execute "install bundler" do
-          command "apt-get install bundler -y"
+          command "/home/#{user}/.rbenv/versions/#{ruby_version}/bin/gem install bundler"
         end
         
         #
@@ -81,9 +69,9 @@ search(:apps) do |any_app|
         if app['skip_bundle']
           ; # do nothing
         else
-          #
-          # bundle
-          #
+          ##
+          ## bundle
+          ##
           [ :delete, :create ].each do |which_action|
             directory "#{app['deploy_to']}/current/vendor" do
               action which_action
@@ -94,15 +82,15 @@ search(:apps) do |any_app|
             command "export LANG=en_US.UTF-8 &&
                      export LANGUAGE=en_US.UTF-8 &&
                      export export LC_ALL=en_US.UTF-8 && 
-                     bundle"
+                     /home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle install --path vendor/bundle"
             cwd "#{app['deploy_to']}/current"
           end
         end
 
         
-        #
-        # configure the app
-        #
+        ##
+        ## configure the app
+        ##
         template "#{app['deploy_to']}/current/config/initializers/s3.rb" do
           owner app['owner']
           source "app/config/initializers/s3.rb.erb"
@@ -131,9 +119,9 @@ search(:apps) do |any_app|
         end
 
 
-        #
-        # link ish_lib
-        #
+        ##
+        ## link ish_lib
+        ##
         %w{ app/models app/assets lib data vendor/assets }.each do |folder|
           link "#{app['deploy_to']}/current/#{folder}" do
             to "/home/#{app['owner']}/projects/ish_lib/current/#{folder}"
@@ -142,9 +130,9 @@ search(:apps) do |any_app|
 
     
 
-        #
-        # create some dirs
-        #
+        ##
+        ## create some dirs
+        ##
         %w{ tmp/cache/assets }.each do |folder|
           directory "#{app['deploy_to']}/current/#{folder}" do
             action :create
@@ -154,9 +142,9 @@ search(:apps) do |any_app|
         end
         
 
-        #
-        # service
-        #
+        ##
+        ## service
+        ##
         template "#{app['deploy_to']}/shared/unicorn.rb" do
           owner app['owner']
           group app['owner']
@@ -181,7 +169,7 @@ search(:apps) do |any_app|
             :app_root       => "#{app['deploy_to']}/current",
             :log_file       => "#{app['deploy_to']}/current/log/unicorn.log",
             :unicorn_config => "#{app['deploy_to']}/shared/unicorn.rb",
-            :unicorn_binary => "bundle exec unicorn_rails",
+            :unicorn_binary => "/home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle exec unicorn_rails",
             :rack_env       => 'production',
             :user           => app['owner']
           )
@@ -193,7 +181,7 @@ search(:apps) do |any_app|
         end
 
 	## this is a bit too extreme... it actually affects the run list.
-        ## DO NOT USE! _vp_ 20152009
+        ## DO NOT USE! _vp_ 20150209
         # node.run_list.remove( "role[#{app['id']}]" )
 
       end
