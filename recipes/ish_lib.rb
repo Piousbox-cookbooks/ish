@@ -4,12 +4,14 @@
 # recipe     ish-lib
 #
 # deploy resource 
-# Copyright (c) CAC, wasya.co
+#
+# Copyright (c) wasya.co
 # 20120801
 # 20140623
 # 20140705
 # 20150608
 # 20151227
+# 20170520
 #
 
 app = data_bag_item('utils', 'ish_lib')

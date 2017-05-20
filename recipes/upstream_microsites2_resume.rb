@@ -10,15 +10,23 @@ search(:apps) do |any_app|
 
         ## config
         user = app['user'][node.chef_environment]
-	ruby_version = app['ruby_version'][node.chef_environment]
+	      ruby_version = app['ruby_version'][node.chef_environment]
         
+        ##
+        ## some folders
+        ##
+        directory "#{app['deploy_to']}/shared" do
+          mode "0777"
+        end
         %w{ log pids }.each do |name|
           directory "#{app['deploy_to']}/shared/#{name}" do
             action :create
             recursive true
             owner app['owner']
+            mode '0700'
           end
         end
+
 
         execute "install bundler" do
           command "apt-get install bundler -y"
@@ -70,7 +78,7 @@ search(:apps) do |any_app|
           #
           # bundle
           #
-          [ :delete, :create ].each do |which_action|
+          [ :create ].each do |which_action| # let's not :delete first, too time consuming _vp_ 20170520
             directory "#{app['deploy_to']}/current/vendor" do
               action which_action
               recursive true
@@ -145,7 +153,7 @@ search(:apps) do |any_app|
         template "#{app['deploy_to']}/shared/unicorn.rb" do
           owner app['owner']
           group app['owner']
-          source "unicorn.conf.rb.erb"
+          source "unicorn.rb.erb"
           mode "0664"
           variables({
                       :app => app['id'],
