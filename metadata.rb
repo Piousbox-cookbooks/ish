@@ -4,7 +4,7 @@ maintainer        "wasya.co"
 maintainer_email  "victor@wasya.co"
 license           "MIT"
 long_description  IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version           "0.3.0"
+version           "0.4.1"
 
 %w{ application git php ish_apache nginx 
     rbenv ruby_rbenv ruby_build 

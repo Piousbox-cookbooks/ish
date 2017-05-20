@@ -1,13 +1,5 @@
 
-## trash _vp_ 20160508
-# gems = %w{ bundler }
-# gems.each do |gem|
-#   gem_package gem do
-#     action :install
-#   end
-# end
-
-include_recipe 'ish::install_ruby' # _vp_ 20160508
+include_recipe 'ish::install_ruby'
 include_recipe 'ish::ish_lib'
 
 search(:apps) do |any_app|
@@ -18,6 +10,7 @@ search(:apps) do |any_app|
 
         ## config
         user = app['user'][node.chef_environment]
+	ruby_version = app['ruby_version'][node.chef_environment]
         
         %w{ log pids }.each do |name|
           directory "#{app['deploy_to']}/shared/#{name}" do
@@ -133,7 +126,6 @@ search(:apps) do |any_app|
           end
         end
 
-    
 
         #
         # create some dirs
