@@ -17,6 +17,7 @@ search(:apps) do |any_app|
         ##
         directory "#{app['deploy_to']}/shared" do
           mode "0777"
+          recursive true
         end
         %w{ log pids }.each do |name|
           directory "#{app['deploy_to']}/shared/#{name}" do
@@ -97,7 +98,7 @@ search(:apps) do |any_app|
         #
         # configure the app
         #
-        template "#{app['deploy_to']}/current/config/initializers/s3.rb" do
+        template "#{app['deploy_to']}/current/config/initializers/00_s3.rb" do
           owner app['owner']
           source "app/config/initializers/s3.rb.erb"
           variables(
@@ -179,15 +180,19 @@ search(:apps) do |any_app|
             :user           => app['owner']
           )
         end
+
         service upstart_script_name do
-          provider Chef::Provider::Service::Upstart
+          case node['platform']
+          when 'ubuntu'
+            if node['platform_version'].to_f >= 16.04
+              provider Chef::Provider::Service::Systemd
+            else
+              provider Chef::Provider::Service::Upstart
+            end
+          end
           supports :status => true, :restart => true
           action [ :enable, :start ]
         end
-
-	## this is a bit too extreme... it actually affects the run list.
-        ## DO NOT USE! _vp_ 20152009
-        # node.run_list.remove( "role[#{app['id']}]" )
 
       end
     end

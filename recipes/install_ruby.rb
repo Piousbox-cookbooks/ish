@@ -6,7 +6,7 @@
 # _vp_ 20151227
 #      20160113 rbenv doesn't work again... installing from packages
 # _vp_ 20160508 This here, it better work!
-#
+# _vp_ 20170520 let's install ruby from rbenv
 #
 
 # @TODO: refactor, this should be in attributes/default.rb

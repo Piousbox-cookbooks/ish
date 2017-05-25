@@ -1,0 +1,13 @@
+[Unit]
+Description=<%= @description %>
+
+[Service]
+Type=forking
+WorkingDirectory=<%= @cwd %>
+ExecStart=<%= @exec_start %>
+ExecStop=<%= @exec_stop %>
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
