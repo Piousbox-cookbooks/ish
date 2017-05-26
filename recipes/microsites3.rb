@@ -1,12 +1,11 @@
 
 include_recipe 'ish::install_ruby'
-include_recipe 'ish::ish_lib'
 
 search(:apps) do |any_app|
   node.roles.each do |role|
     if any_app['id'] == role
       app = data_bag_item('apps', any_app['id'])
-      if app['type'][app['id']].include?( "upstream_microsites_resume" )
+      if app['type'][app['id']].include?( "upstream_microsites3" )
 
         ## config
         user = app['user'][node.chef_environment]
@@ -115,25 +114,6 @@ search(:apps) do |any_app|
             :database => app['databases']['mongoid']['database'],
             :environment => app['rack_environment']
           )
-        end
-=begin
-        template "#{app['deploy_to']}/current/config/initializers/recaptcha.rb" do
-          owner app['owner']
-          source "app/config/initializers/recaptcha.rb.erb"
-          variables(
-            :site_key => app['recaptcha_site_key'],
-            :secret_key => app['recaptcha_secret_key']
-          )
-        end
-=end
-
-        #
-        # link ish_lib
-        #
-        %w{ app/models app/assets lib data vendor/assets }.each do |folder|
-          link "#{app['deploy_to']}/current/#{folder}" do
-            to "/home/#{app['owner']}/projects/ish_lib/current/#{folder}"
-          end
         end
 
 
