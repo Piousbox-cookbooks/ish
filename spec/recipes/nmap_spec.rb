@@ -1,6 +1,4 @@
-
 require 'spec_helper'
-
 describe 'ish::nmap' do
   let(:chef_run) do
     ChefSpec::SoloRunner.new do |node|

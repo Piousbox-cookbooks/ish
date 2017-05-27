@@ -101,9 +101,10 @@ search(:apps) do |any_app|
           owner app['owner']
           source "app/config/initializers/s3.rb.erb"
           variables(
-            :key => app['s3_key'],
-            :secret => app['s3_secret'],
-            :bucket => app['s3_bucket']
+            :key       => app['s3_key'],
+            :secret    => app['s3_secret'],
+            :bucket    => app['s3_bucket'],
+            :s3_region => app['s3_region']
           )
         end
         template "#{app['deploy_to']}/current/config/mongoid.yml" do
@@ -120,11 +121,12 @@ search(:apps) do |any_app|
         #
         # create some dirs
         #
-        %w{ tmp/cache/assets }.each do |folder|
+        %w{ tmp/cache tmp/cache/assets }.each do |folder|
           directory "#{app['deploy_to']}/current/#{folder}" do
             action :create
             owner app['owner']
             recursive true
+            mode "0777"
           end
         end
         

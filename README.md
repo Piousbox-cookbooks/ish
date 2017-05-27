@@ -1,14 +1,10 @@
 [![Build Status](https://travis-ci.org/Piousbox-cookbooks/ish.svg?branch=0.2.4)](https://travis-ci.org/Piousbox-cookbooks/ish)
 
-About
-=====
+# About
 
-This cookbook from a long time ago helps me deploy various resources. Mostly rails stacks.
+Deploys microsites3 and ish_* apps.
 
-Versions
-========
-|version|date     |description                                 |
-|-------|---------|--------------------------------------------|
-|0.2.0  |20151226 |making extensive use of chef environments.  |
-|0.2.1  |20151227 |chef-spec is in.                            |
+# Development
 
+# Test
+ be rspec spec/recipes/microsites3_spec.rb

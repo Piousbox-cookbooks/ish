@@ -1,4 +1,5 @@
-
+0.2.0 - 20151226 making extensive use of chef environments.
+0.2.1 - 20151227 chef-spec is in.
 0.2.4 - mysql installer is spec'ed
 0.2.3 - a lot of bjjc work
 0.2.4 - relatively stable before custom ruby?

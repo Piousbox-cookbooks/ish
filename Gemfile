@@ -13,5 +13,6 @@ group :integration do
 end
 
 group :development do
+  gem 'chefspec'
 end
 
