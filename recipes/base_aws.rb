@@ -12,6 +12,7 @@ homedir = 'root' == user ? '/root' : "/home/#{user}"
 ## ruby-dev is not a package I need?
 packages = %w{
   emacs tree screen git wget curl
+  imagemagic
 }
 
 # packages += node['packages'].to_a || [] # _vp_ 20160426 what this? 

@@ -8,3 +8,4 @@
 0.3.0 - deploying bjjc_cart
 0.4.1 - 20170520, restarting all of that. working on microsites3_manager 
         as upstream_microsites2_resume project
+0.4.2 - let's try to not bundle in production (work in progress)

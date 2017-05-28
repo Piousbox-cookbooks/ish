@@ -72,6 +72,9 @@ search(:apps) do |any_app|
           migrate false
         end
 
+        #
+        # bundle
+        #
         if app['skip_bundle']
           ; # do nothing
         else
@@ -92,7 +95,13 @@ search(:apps) do |any_app|
             cwd "#{app['deploy_to']}/current"
           end
         end
-
+        if app['bundle_update_individual_gems']
+          app['bundle_update_individual_gems'][node.chef_environment].each do |individual_gem|
+            execute "/home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle update #{individual_gem}" do
+              cwd "#{app['deploy_to']}/current"
+            end
+          end
+        end
         
         #
         # configure the app
@@ -171,7 +180,7 @@ search(:apps) do |any_app|
             end
           end
           supports :status => true, :restart => true
-          action [ :enable, :start ]
+          action [ :enable, :start, :restart ]
         end
 
       end
