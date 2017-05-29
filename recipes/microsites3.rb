@@ -8,9 +8,15 @@ search(:apps) do |any_app|
       if app['type'][app['id']].include?( "upstream_microsites3" )
 
         ## config
-        user = app['user'][node.chef_environment]
-	      ruby_version = app['ruby_version'][node.chef_environment]
-        
+        user                = app['user'][node.chef_environment]
+	      ruby_version        = app['ruby_version'][node.chef_environment]
+        upstart_script_name = "#{app['id']}.service"
+
+        # let's free up some memory for this run
+        service upstart_script_name do
+          action :stop
+        end
+
         ##
         ## some folders
         ##
@@ -27,14 +33,9 @@ search(:apps) do |any_app|
           end
         end
 
-
-        execute "install bundler" do
-          command "apt-get install bundler -y"
-        end
-        
-        #
-        # wrapper
-        #
+        ##
+        ## wrapper
+        ##
         ruby_block "write_key" do
           block do
             f = ::File.open("#{app['deploy_to']}/id_deploy", "w")
@@ -56,9 +57,9 @@ search(:apps) do |any_app|
           variables app.to_hash
         end
        
-        #
-        # deploy resource
-        #
+        ##
+        ## deploy resource
+        ##
         deploy_revision app['id'] do
           revision app['revision'][node.chef_environment]
           repository app['repository']
@@ -91,15 +92,9 @@ search(:apps) do |any_app|
             command "export LANG=en_US.UTF-8 &&
                      export LANGUAGE=en_US.UTF-8 &&
                      export export LC_ALL=en_US.UTF-8 && 
-                     /home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle install --path vendor/bundle"
+                     /home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle install --path vendor/bundle \
+                       --without development test"
             cwd "#{app['deploy_to']}/current"
-          end
-        end
-        if app['bundle_update_individual_gems']
-          app['bundle_update_individual_gems'][node.chef_environment].each do |individual_gem|
-            execute "/home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle update #{individual_gem}" do
-              cwd "#{app['deploy_to']}/current"
-            end
           end
         end
         
@@ -139,6 +134,15 @@ search(:apps) do |any_app|
           end
         end
         
+        
+        #
+        # compile assets
+        #
+        execute "compile assets" do
+          command "RAILS_ENV=#{app['rack_environment']} bundle exec rake assets:precompile"
+          cwd "#{app['deploy_to']}/current"
+        end
+
 
         #
         # service
@@ -157,7 +161,6 @@ search(:apps) do |any_app|
                     })
         end
 
-        upstart_script_name = "#{app['id']}.service"
         template "/lib/systemd/system/#{upstart_script_name}" do
           source "lib/systemd/system/unicorn-systemd.service.erb"
           owner "root"
@@ -166,7 +169,8 @@ search(:apps) do |any_app|
           variables(
             :description    => app['id'],
             :cwd            => "#{app['deploy_to']}/current",
-            :exec_start     => "/usr/bin/bundle exec unicorn_rails -c #{app['deploy_to']}/shared/unicorn.rb -E #{app['rack_environment']}",
+            :exec_start     => "/home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle exec unicorn_rails " +
+                               "-c #{app['deploy_to']}/shared/unicorn.rb -E #{app['rack_environment']}",
             :exec_stop      => "/bin/echo nothing"
           )
         end
