@@ -8,3 +8,4 @@ Deploys microsites3 and ish_* apps.
 
 # Test
  be rspec spec/recipes/microsites3_spec.rb
+

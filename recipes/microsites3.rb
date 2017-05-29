@@ -1,4 +1,9 @@
 
+def puts! a, b=''
+  puts "+++ +++ #{b}"
+  puts a.inspect
+end
+
 include_recipe 'ish::install_ruby'
 
 search(:apps) do |any_app|
@@ -7,19 +12,24 @@ search(:apps) do |any_app|
       app = data_bag_item('apps', any_app['id'])
       if app['type'][app['id']].include?( "upstream_microsites3" )
 
+        ##
         ## config
+        ##
         user                = app['user'][node.chef_environment]
 	      ruby_version        = app['ruby_version'][node.chef_environment]
         upstart_script_name = "#{app['id']}.service"
+        bundle_exec = "RAILS_ENV=#{app['rack_environment']} /home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle exec"
 
         # let's free up some memory for this run
         service upstart_script_name do
           action :stop
         end
 
+
         ##
         ## some folders
         ##
+        puts! app, 'herehere deployt ot'
         directory "#{app['deploy_to']}/shared" do
           mode "0777"
           recursive true
@@ -139,7 +149,7 @@ search(:apps) do |any_app|
         # compile assets
         #
         execute "compile assets" do
-          command "RAILS_ENV=#{app['rack_environment']} bundle exec rake assets:precompile"
+          command "#{bundle_exec} rake assets:precompile"
           cwd "#{app['deploy_to']}/current"
         end
 
