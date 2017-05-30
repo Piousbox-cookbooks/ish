@@ -200,7 +200,9 @@ search(:apps) do |any_app|
         ##
         ## clear cache
         ##
-        execute "#{bundle_exec} rake tmp:cache:clear"
+        execute "#{bundle_exec} rake tmp:cache:clear" do
+          cwd "#{app['deploy_to']}/current"
+        end          
 
       end
     end
