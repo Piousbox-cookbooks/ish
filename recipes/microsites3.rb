@@ -92,7 +92,7 @@ search(:apps) do |any_app|
           #
           # bundle
           #
-          [ :create ].each do |which_action| # let's not :delete first, too time consuming _vp_ 20170520
+          [ :delete, :create ].each do |which_action| # let's not :delete first, too time consuming _vp_ 20170520
             directory "#{app['deploy_to']}/current/vendor" do
               action which_action
               recursive true
@@ -196,6 +196,11 @@ search(:apps) do |any_app|
           supports :status => true, :restart => true
           action [ :enable, :start, :restart ]
         end
+
+        ##
+        ## clear cache
+        ##
+        execute "#{bundle_exec} rake tmp:cache:clear"
 
       end
     end
