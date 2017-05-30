@@ -2,5 +2,7 @@ language: ruby
 rvm:
  - 2.3.1
 cache: bundler 
+before_install:
+  - mkdir -p cookbooks
+  - bundle exec librarian-chef install
 script: bundle exec rake
-

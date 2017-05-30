@@ -12,7 +12,8 @@ end
 
 RSpec.configure do |config|
   config.cookbook_path = [ '/home/piousbox/projects/rails-quick-start/cookbooks',
-                           '/home/piousbox/projects/rails-quick-start/site-cookbooks' ]
+                           '/home/piousbox/projects/rails-quick-start/site-cookbooks',
+                           'test/cookbooks' ]
 
   config.role_path = [ 'test/roles' ]
 

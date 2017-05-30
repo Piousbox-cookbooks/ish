@@ -7,5 +7,6 @@ Deploys microsites3 and ish_* apps.
 # Development
 
 # Test
+ be librarian-chef install
  be rspec spec/recipes/microsites3_spec.rb
 
