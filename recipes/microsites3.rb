@@ -29,7 +29,6 @@ search(:apps) do |any_app|
         ##
         ## some folders
         ##
-        puts! app, 'herehere deployt ot'
         directory "#{app['deploy_to']}/shared" do
           mode "0777"
           recursive true

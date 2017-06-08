@@ -6,6 +6,7 @@ SITE
       poise (~> 2.4)
       poise-service (~> 1.0)
     apt (2.9.2)
+    bjjcollective (0.1.0)
     bluepill (2.4.1)
       rsyslog (~> 2.0)
     build-essential (2.2.4)
@@ -90,6 +91,7 @@ PATH
 
 DEPENDENCIES
   application (>= 0)
+  bjjcollective (>= 0)
   ish (>= 0)
   ish_apache (>= 0)
   php (>= 0)
