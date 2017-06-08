@@ -1,10 +1,7 @@
-
 require 'spec_helper'
-
 describe 'ish::static_site' do
-  
   let(:chef_run) do
-    ChefSpec::SoloRunner.new do |node|
+    ChefSpec::SoloRunner.new( :platform => 'ubuntu', :version => '16.04' ) do |node|
       node.default[:rbenv] = { :global => '2.0.0-p576',
                                :rubies => [ '2.0.0-p576' ]
                              }

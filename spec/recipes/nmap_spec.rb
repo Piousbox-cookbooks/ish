@@ -1,7 +1,7 @@
 require 'spec_helper'
 describe 'ish::nmap' do
   let(:chef_run) do
-    ChefSpec::SoloRunner.new do |node|
+    ChefSpec::SoloRunner.new( :platform => 'ubuntu', :version => '16.04' ) do |node|
       ;
     end.converge(described_recipe)
   end

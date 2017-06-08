@@ -16,6 +16,7 @@ RSpec.configure do |config|
                            './cookbooks', './' ]
 
   config.role_path = [ 'test/roles' ]
+  config.log_level = :error
 
   # config.environment_path = ''
 end

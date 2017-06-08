@@ -22,8 +22,6 @@ packages = %w{
   imagemagick yarn
 }
 
-
-
 # packages += node['packages'].to_a || [] # _vp_ 20160426 what this? 
 # Error executing action `install` on resource 'apt_package[accountsservice, {"version"=>"0.6.35-0ubuntu7.2"}]'
 packages.each do |pkg|

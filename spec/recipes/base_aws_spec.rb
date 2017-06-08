@@ -1,9 +1,7 @@
-
 require 'spec_helper'
-
 describe 'ish::base_aws' do
   let(:chef_run) do
-    ChefSpec::SoloRunner.new do |node|
+    ChefSpec::SoloRunner.new( :platform => 'ubuntu', :version => '16.04' ) do |node|
       node.set['cookbook']['attribute'] = 'hello'
     end.converge(described_recipe)
   end
