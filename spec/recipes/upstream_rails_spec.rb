@@ -46,9 +46,11 @@ describe 'ish::upstream_rails' do
     end
   end
 
+=begin
   it 'installs bundler' do
     expect(chef_run).to install_gem_package 'bundler'
   end
+=end
 
   it 'creates all the directories' do
     deploy_to = @deploy_to

@@ -10,7 +10,7 @@ search(:apps).each do |any_app|
     if any_app['id'] == role
       app = data_bag_item 'apps', any_app['id']
       if app['type'][app['id']].include? 'static_site'
-        puts! "ish::static_site, deploying #{role}"
+        # puts! "ish::static_site, deploying #{role}"
 
         user = app['user'][node.chef_environment]
         port = app['port'][node.chef_environment]
