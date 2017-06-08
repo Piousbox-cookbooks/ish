@@ -5,8 +5,8 @@ description "Role bjjcollective. Environments: _default, vm_samsung."
 
 run_list(
   "recipe[ish_apache::install_apache]",
-  "recipe[ish::upstream_rails]",
-  "recipe[bjjcollective::default]"
+  "recipe[ish::upstream_rails]"
+  # "recipe[bjjcollective::default]"
 )
 
 override_attributes({
