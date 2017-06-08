@@ -17,7 +17,7 @@ packages = %w{
  openssl-devel readline-devel zlib-devel
 }
 
-command 'yum groupinstall "Development Tools" -y'
+execute 'yum groupinstall "Development Tools" -y'
 
 packages.each do |pkg|
   package pkg do
