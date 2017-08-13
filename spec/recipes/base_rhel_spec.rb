@@ -1,5 +1,5 @@
 require 'spec_helper'
-describe 'ish::base_aws' do
+describe 'ish::base_rhel' do
   let(:chef_run) do
     ChefSpec::SoloRunner.new( :platform => 'centos', :version => '6.7' ) do |node| # no rhel/7.3, instead centos/6.7
       node.set['cookbook']['attribute'] = 'hello'

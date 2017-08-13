@@ -9,8 +9,8 @@ file "/etc/apt/sources.list.d/yarn.list" do
   mode '0755'
 end
 
-execute 'apt-get update -y' do
-  command %{apt-get update -y}
+execute 'sudo apt-get update -y' do
+  command %{sudo apt-get update -y}
 end
 
 user = node['user'] || 'ubuntu'

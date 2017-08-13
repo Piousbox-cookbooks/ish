@@ -181,7 +181,7 @@ search(:apps).each do |any_app|
         template "#{deploy_to}/shared/unicorn.rb" do
           owner    owner
           group    owner
-          source   "unicorn.conf.rb.erb"
+          source   "unicorn.rb.erb"
           mode     "0664"
           variables({
                       :app => app['id'],

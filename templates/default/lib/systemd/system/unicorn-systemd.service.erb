@@ -2,6 +2,10 @@
 Description=<%= @description %>
 
 [Service]
+Environment=GMAIL_DOMAIN=gmail.com
+Environment=GMAIL_USERNAME=<%= @gmail_username %>
+Environment=GMAIL_PASSWORD=<%= @gmail_password %>
+
 WorkingDirectory=<%= @cwd %>
 ExecStart=<%= @exec_start %>
 ExecStop=<%= @exec_stop %>

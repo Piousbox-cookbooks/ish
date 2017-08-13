@@ -16,10 +16,11 @@ search(:apps) do |any_app|
         ## config
         ##
         user                = app['user'][node.chef_environment]
-	      ruby_version        = app['ruby_version'][node.chef_environment]
+        ruby_version        = app['ruby_version'][node.chef_environment]
         upstart_script_name = "#{app['id']}.service"
-        bundle_exec = "RAILS_ENV=#{app['rack_environment']} /home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle exec"
-
+        bundle_cmd          = "RAILS_ENV=#{app['rack_environment']} /home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle"
+        bundle_exec         = "#{bundle_cmd} exec"
+        
         # let's free up some memory for this run
         service upstart_script_name do
           action :stop
@@ -101,8 +102,7 @@ search(:apps) do |any_app|
             command "export LANG=en_US.UTF-8 &&
                      export LANGUAGE=en_US.UTF-8 &&
                      export export LC_ALL=en_US.UTF-8 && 
-                     /home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle install --path vendor/bundle \
-                       --without development test"
+                     #{bundle_cmd} --path vendor/bundle --without development test"
             cwd "#{app['deploy_to']}/current"
           end
         end
@@ -178,6 +178,8 @@ search(:apps) do |any_app|
           variables(
             :description    => app['id'],
             :cwd            => "#{app['deploy_to']}/current",
+            :gmail_username => app['gmail_username'][node.chef_environment],
+            :gmail_password => app['gmail_password'][node.chef_environment],
             :exec_start     => "/home/#{user}/.rbenv/versions/#{ruby_version}/bin/bundle exec unicorn_rails " +
                                "-c #{app['deploy_to']}/shared/unicorn.rb -E #{app['rack_environment']}",
             :exec_stop      => "/bin/echo nothing"
