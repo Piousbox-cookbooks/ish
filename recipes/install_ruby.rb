@@ -10,6 +10,7 @@
 #
 
 # @TODO: refactor, this should be in attributes/default.rb
+=begin
 user = case node.chef_environment
        when 'vm_samsung'
          'oink'
@@ -30,6 +31,9 @@ user = case node.chef_environment
        else
          'ubuntu'
        end
+=end
+user = node['user']
+puts! user, 'user'
 
 # @TODO: refactor this into attributes/default.rb
 %w{ git libssl-dev libreadline-dev }.each do |pkg|
