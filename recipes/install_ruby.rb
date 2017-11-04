@@ -9,27 +9,10 @@
 # _vp_ 20170520 let's install ruby from rbenv
 #
 
-# @TODO: refactor, this should be in attributes/default.rb
-user = case node.chef_environment
-       when 'vm_samsung'
-         'oink'
-       when 'vm_vagrant'
-         'vagrant'
-       when 'vm_vagrant_spec'
-         'vagrant'
-       when '_default'
-         'ubuntu'
-       when 'aws_production'
-         'ubuntu'
-       when 'aws_staging'
-         'ubuntu'
-       when 'demo1'
-         'ubuntu'
-       when 'demo2'
-         'ubuntu'
-       else
-         'ubuntu'
-       end
+user = node.attributes['user']
+raise 'Need user specified here' unless user
+rubies = [ node.attributes['ruby_version'] ]
+raise 'Need ruby_version here' unless rubies[0]
 
 # @TODO: refactor this into attributes/default.rb
 %w{ git libssl-dev libreadline-dev }.each do |pkg|
