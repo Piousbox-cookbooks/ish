@@ -1,0 +1,14 @@
+[Unit]
+Description=<%= @description %>
+
+[Service]
+# Type=forking # _vp_ 20171019
+WorkingDirectory=<%= @cwd %>
+ExecStart=<%= @exec_start %>
+ExecStop=/bin/echo nothing
+Restart=on-failure
+Environment=RAILS_ENV=<%= @environment %>
+
+[Install]
+WantedBy=multi-user.target
+

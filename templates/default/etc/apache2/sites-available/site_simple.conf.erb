@@ -1,0 +1,21 @@
+
+<VirtualHost *:<%=@port-%>>
+
+  ServerAdmin admin@piousbox.com
+
+  <proxy>
+    Order deny,allow
+    Allow from all
+  </proxy>
+
+  DocumentRoot "/home/<%=@user-%>/projects/<%=@name-%>/current/public"
+
+  <Directory /home/<%=@user-%>/projects/<%=@name-%>/current/public>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride None
+    Order allow,deny
+    allow from all
+    Require all granted
+  </Directory>
+  
+</VirtualHost>

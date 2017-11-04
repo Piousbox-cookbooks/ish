@@ -1,0 +1,11 @@
+0.2.0 - 20151226 making extensive use of chef environments.
+0.2.1 - 20151227 chef-spec is in.
+0.2.4 - mysql installer is spec'ed
+0.2.3 - a lot of bjjc work
+0.2.4 - relatively stable before custom ruby?
+0.2.5 - the custom ruby install (via rbenv still) implies that upstream_rails 
+        should use the full path of the ruby.
+0.3.0 - deploying bjjc_cart
+0.4.1 - 20170520, restarting all of that. working on microsites3_manager 
+        as upstream_microsites2_resume project
+0.4.2 - let's try to not bundle in production (work in progress)
