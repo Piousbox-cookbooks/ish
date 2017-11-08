@@ -16,6 +16,7 @@ packages = %w{
  git
  screen
  ruby-dev
+ mongodb-clients
 }
 
 packages.each do |pkg|

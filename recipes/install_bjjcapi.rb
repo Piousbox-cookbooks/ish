@@ -1,7 +1,7 @@
 
 #
 # _vp_ 20171103
-# use with ish::install_nginx, then use capistrano to deploy
+# use with ish::install_nginx, ish::install_bjjcapi then use capistrano to deploy
 #
 # this just puts the codebase in, not runs the service
 #
@@ -14,7 +14,7 @@ end
 include_recipe 'ish::install_ruby'
 
 user             = node.attributes['user']
-app              = data_bag_item('apps', 'microsites3')
+app              = data_bag_item('apps', 'bjjcollective')
 app['deploy_to'] = "/home/#{user}/projects/#{app['id']}"
 app['owner']     = user
 app['group']     = user
@@ -31,8 +31,11 @@ raise "need domain here"       unless app['domain'][node.chef_environment]
 puts! app['domain'][node.chef_environment], 'domain is'
 puts! app, 'app'
 
-raise 'need user' unless user
-raise 'need ruby version' unless ruby_version
+app['packages'].each do |pkg, version|
+  package pkg do
+    action :install
+  end
+end
 
         ##
         ## some folders
@@ -111,14 +114,25 @@ raise 'need ruby version' unless ruby_version
         #
         # configure the app
         #
+        template "#{app['deploy_to']}/shared/config/database.yml" do
+          owner app['owner']
+          source "app/config/database.yml.erb"
+          variables(
+          )
+        end
+        link "#{app['deploy_to']}/current/config/database.yml" do
+          to "#{app['deploy_to']}/shared/config/database.yml"
+          link_type :symbolic
+        end
+
         template "#{app['deploy_to']}/shared/config/initializers/00_s3.rb" do
           owner app['owner']
           source "app/config/initializers/s3.rb.erb"
           variables(
-            :key       => app['s3_key'],
-            :secret    => app['s3_secret'],
-            :bucket    => app['s3_bucket'],
-            :s3_region => app['s3_region']
+            :key       => app['s3_key'][node.chef_environment],
+            :secret    => app['s3_secret'][node.chef_environment],
+            :bucket    => app['s3_bucket'][node.chef_environment],
+            :s3_region => app['s3_region'][node.chef_environment]
           )
         end
         link "#{app['deploy_to']}/current/config/initializers/00_s3.rb" do
@@ -185,7 +199,7 @@ raise 'need ruby version' unless ruby_version
         # migrate
         #
         execute "migrate" do
-          command "#{bundle_exec} rake ish:migrate"
+          command "#{bundle_exec} rake migrate"
           cwd     "#{app['deploy_to']}/current"
         end
 
@@ -214,3 +228,7 @@ raise 'need ruby version' unless ruby_version
         end
 
         execute "sudo systemctl restart nginx.service" 
+
+
+
+

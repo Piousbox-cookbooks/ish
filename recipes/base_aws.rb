@@ -9,9 +9,7 @@ file "/etc/apt/sources.list.d/yarn.list" do
   mode '0755'
 end
 
-execute 'sudo apt-get update -y' do
-  command %{sudo apt-get update -y}
-end
+execute "sudo apt-get update -y || echo not_ok"
 
 user = node['user'] || 'ubuntu'
 homedir = 'root' == user ? '/root' : "/home/#{user}"

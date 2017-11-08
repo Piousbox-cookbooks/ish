@@ -7,6 +7,7 @@
 #      20160113 rbenv doesn't work again... installing from packages
 # _vp_ 20160508 This here, it better work!
 # _vp_ 20170520 let's install ruby from rbenv
+#      20171105 looking better, ruby version is part of environment
 #
 
 user = node.attributes['user']
@@ -29,7 +30,7 @@ execute "install ruby-build" do
   not_if { ::File.exists?( "/home/#{user}/.rbenv/plugins/ruby-build" ) }
 end
 
-node['rbenv']['rubies'].each do |ruby_version|
+rubies.each do |ruby_version|
   execute "install ruby #{ruby_version}" do
     cwd "/home/#{user}/.rbenv/bin"
     command <<-EOL
@@ -41,7 +42,7 @@ node['rbenv']['rubies'].each do |ruby_version|
 end
 
 file "/home/#{user}/.rbenv/version" do
-  content node['rbenv']['global']
+  content rubies[0]
 end
 
 
